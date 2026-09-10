@@ -6,69 +6,99 @@
     <title>SMART GREEN HOUSE</title>
     <!-- MQTT Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
-    <!-- Chart.js Library untuk Grafik -->
+    <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #f7f9fa; margin: 0; padding: 20px; color: #333; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
         
-        .header { display: flex; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto 10px auto; }
-        .header h1 { font-size: 22px; font-weight: 800; margin: 0; }
+        /* Background Nuansa Segar (Gradient Hijau Soft) */
+        body { 
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #e0f2f1 100%);
+            min-height: 100vh;
+            margin: 0; 
+            padding: 25px 20px; 
+            color: #1b4332; 
+        }
+        
+        .header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            max-width: 950px; 
+            margin: 0 auto 15px auto; 
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(45, 106, 79, 0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+        .header h1 { font-size: 22px; font-weight: 800; margin: 0; color: #2d6a4f; letter-spacing: 0.5px; }
         .header-info { text-align: right; }
-        .live-clock { font-size: 13px; font-weight: 600; color: #5f6368; }
-        .status-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: #e0e0e0; color: #666; display: inline-block; margin-top: 4px; }
-        .online { background: #e6f4ea; color: #137333; }
+        .live-clock { font-size: 13px; font-weight: 700; color: #40916c; }
+        .status-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #d8f3dc; color: #1b4332; display: inline-block; margin-top: 4px; border: 1px solid #74c69d; }
+        .online { background: #52b788; color: white; border-color: #40916c; box-shadow: 0 0 8px rgba(82, 183, 136, 0.4); }
 
         /* Banner Alert */
-        .alert-banner { max-width: 900px; margin: 0 auto 15px auto; padding: 12px 15px; background: #fce8e6; border-left: 5px solid #d93025; color: #c5221f; font-size: 13px; font-weight: bold; border-radius: 6px; display: none; }
+        .alert-banner { max-width: 950px; margin: 0 auto 15px auto; padding: 12px 15px; background: #ffbe0b; border-left: 5px solid #d90429; color: #2b2d42; font-size: 13px; font-weight: bold; border-radius: 8px; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 15px;
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto 20px auto;
         }
 
-        .card { background: white; border-radius: 8px; padding: 18px; border: 1px solid #eaedf0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); position: relative; }
+        /* Kartu dengan aksen Greenhouse */
+        .card { 
+            background: rgba(255, 255, 255, 0.85); 
+            border-radius: 12px; 
+            padding: 20px; 
+            border: 1px solid rgba(116, 198, 157, 0.3); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); 
+            backdrop-filter: blur(5px);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(45, 106, 79, 0.1); }
         .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-        .card-title { font-size: 11px; font-weight: 700; color: #70757a; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card-title { font-size: 12px; font-weight: 800; color: #2d6a4f; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* Condition Badge (IDEAL / KERING / PANAS) */
-        .cond-badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
-        .cond-good { background: #e6f4ea; color: #137333; }
-        .cond-warn { background: #fef7e0; color: #b06000; }
-        .cond-danger { background: #fce8e6; color: #c5221f; }
+        /* Condition Badge */
+        .cond-badge { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; }
+        .cond-good { background: #d8f3dc; color: #1b4332; border: 1px solid #74c69d; }
+        .cond-warn { background: #fff3bf; color: #f59f00; border: 1px solid #ffe066; }
+        .cond-danger { background: #ffe3e3; color: #e03131; border: 1px solid #ffa8a8; }
 
         /* Tampilan Nilai Sensor */
-        .sensor-value { font-size: 32px; font-weight: bold; color: #202124; }
-        .sensor-unit { font-size: 18px; color: #5f6368; margin-left: 2px; }
+        .sensor-value { font-size: 34px; font-weight: 800; color: #081c15; }
+        .sensor-unit { font-size: 20px; color: #52b788; margin-left: 2px; }
 
         /* LED Indikator Bulat */
         .led-container { display: flex; align-items: center; justify-content: space-between; }
-        .led-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #dadce0; background: #fff; transition: all 0.3s ease; }
-        .led-on { background: #34a853; border-color: #34a853; box-shadow: 0 0 8px rgba(52, 168, 83, 0.6); }
+        .led-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #b7e4c7; background: #e8f5e9; transition: all 0.3s ease; }
+        .led-on { background: #52b788; border-color: #2d6a4f; box-shadow: 0 0 12px rgba(82, 183, 136, 0.8); }
 
-        /* Switch Toggle Blynk */
+        /* Switch Toggle */
         .switch-box { display: flex; align-items: center; justify-content: space-between; }
         .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 26px; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #b7e4c7; transition: .3s; border-radius: 26px; }
         .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: #34a853; }
+        input:checked + .slider { background-color: #40916c; }
         input:checked + .slider:before { transform: translateX(22px); }
-        input:disabled + .slider { background-color: #f1f3f4; cursor: not-allowed; }
+        input:disabled + .slider { background-color: #e9ecef; cursor: not-allowed; }
 
-        .mode-text { font-size: 14px; font-weight: bold; color: #202124; }
+        .mode-text { font-size: 14px; font-weight: 800; color: #1b4332; }
 
         /* Area 2 Grafik */
-        .charts-wrapper { max-width: 900px; margin: 0 auto 20px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 15px; }
-        .chart-card { background: white; border-radius: 8px; padding: 18px; border: 1px solid #eaedf0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+        .charts-wrapper { max-width: 950px; margin: 0 auto 20px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 15px; }
+        .chart-card { background: rgba(255, 255, 255, 0.88); border-radius: 12px; padding: 20px; border: 1px solid rgba(116, 198, 157, 0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.04); backdrop-filter: blur(5px); }
 
         /* Tombol Link Google Sheets Footer */
-        .footer-action { max-width: 900px; margin: 0 auto; text-align: center; }
-        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #137333; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; transition: background 0.2s; }
-        .btn-gsheet:hover { background: #0d5224; }
+        .footer-action { max-width: 950px; margin: 0 auto; text-align: center; }
+        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #2d6a4f; color: white; padding: 12px 22px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 700; transition: all 0.2s; box-shadow: 0 4px 10px rgba(45, 106, 79, 0.25); }
+        .btn-gsheet:hover { background: #1b4332; transform: translateY(-2px); box-shadow: 0 6px 14px rgba(45, 106, 79, 0.35); }
 
         @media (max-width: 900px) {
             .charts-wrapper { grid-template-columns: 1fr; }
@@ -79,8 +109,8 @@
 
     <div class="header">
         <div>
-            <h1>🪴 SMART GREEN HOUSE</h1>
-            <div id="last-update" style="font-size: 11px; color: #70757a; margin-top: 2px;">Last Update: -</div>
+            <h1>🌿 SMART GREEN HOUSE</h1>
+            <div id="last-update" style="font-size: 11px; color: #40916c; margin-top: 2px; font-weight: 600;">Last Update: -</div>
         </div>
         <div class="header-info">
             <div id="live-clock" class="live-clock">00:00:00 WIB</div>
@@ -123,19 +153,19 @@
         <div class="card">
             <div class="card-title" style="margin-bottom: 12px;">🚰 AIR (POMPA 1)</div>
             <div class="led-container">
-                <span style="font-size: 13px; color: #5f6368;">Status Relay</span>
+                <span style="font-size: 13px; color: #40916c; font-weight: 600;">Status Relay</span>
                 <div id="led-air" class="led-circle"></div>
             </div>
-            <hr style="border: none; border-top: 1px solid #f1f3f4; margin: 12px 0;">
+            <hr style="border: none; border-top: 1px solid #d8f3dc; margin: 12px 0;">
             <div class="switch-box" style="margin-bottom: 10px;">
-                <span style="font-size: 13px;">Mode: <b id="txt-mode-air" class="mode-text">AUTO</b></span>
+                <span style="font-size: 13px; font-weight: 600;">Mode: <b id="txt-mode-air" class="mode-text">AUTO</b></span>
                 <label class="switch">
                     <input type="checkbox" id="sw-mode-air" onchange="toggleModeAir(this)">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="switch-box">
-                <span style="font-size: 13px;">Saklar Manual</span>
+                <span style="font-size: 13px; color: #2d6a4f; font-weight: 600;">Saklar Manual</span>
                 <label class="switch">
                     <input type="checkbox" id="sw-air" onchange="toggleAir(this)" disabled>
                     <span class="slider"></span>
@@ -147,19 +177,19 @@
         <div class="card">
             <div class="card-title" style="margin-bottom: 12px;">🌀 KIPAS PENDINGIN</div>
             <div class="led-container">
-                <span style="font-size: 13px; color: #5f6368;">Status Relay</span>
+                <span style="font-size: 13px; color: #40916c; font-weight: 600;">Status Relay</span>
                 <div id="led-kipas" class="led-circle"></div>
             </div>
-            <hr style="border: none; border-top: 1px solid #f1f3f4; margin: 12px 0;">
+            <hr style="border: none; border-top: 1px solid #d8f3dc; margin: 12px 0;">
             <div class="switch-box" style="margin-bottom: 10px;">
-                <span style="font-size: 13px;">Mode: <b id="txt-mode-kipas" class="mode-text">AUTO</b></span>
+                <span style="font-size: 13px; font-weight: 600;">Mode: <b id="txt-mode-kipas" class="mode-text">AUTO</b></span>
                 <label class="switch">
                     <input type="checkbox" id="sw-mode-kipas" onchange="toggleModeKipas(this)">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="switch-box">
-                <span style="font-size: 13px;">Saklar Manual</span>
+                <span style="font-size: 13px; color: #2d6a4f; font-weight: 600;">Saklar Manual</span>
                 <label class="switch">
                     <input type="checkbox" id="sw-kipas" onchange="toggleKipas(this)" disabled>
                     <span class="slider"></span>
@@ -171,12 +201,12 @@
         <div class="card">
             <div class="card-title" style="margin-bottom: 12px;">🧪 POMPA PUPUK (POMPA 2)</div>
             <div class="led-container">
-                <span style="font-size: 13px; color: #5f6368;">Status Relay</span>
+                <span style="font-size: 13px; color: #40916c; font-weight: 600;">Status Relay</span>
                 <div id="led-pupuk" class="led-circle"></div>
             </div>
-            <hr style="border: none; border-top: 1px solid #f1f3f4; margin: 12px 0;">
+            <hr style="border: none; border-top: 1px solid #d8f3dc; margin: 12px 0;">
             <div class="switch-box">
-                <span style="font-size: 13px;">Siram Pupuk (3 Detik)</span>
+                <span style="font-size: 13px; color: #2d6a4f; font-weight: 600;">Siram Pupuk (3 Detik)</span>
                 <label class="switch">
                     <input type="checkbox" id="sw-pupuk" onchange="togglePupuk(this)">
                     <span class="slider"></span>
@@ -213,7 +243,6 @@
 
         const client = new Paho.MQTT.Client(host, port, path, clientId);
 
-        // --- UPDATE JAM REAL-TIME ---
         setInterval(function() {
             const skrg = new Date();
             document.getElementById("live-clock").innerText = skrg.toLocaleTimeString('id-ID') + " WIB";
@@ -226,8 +255,8 @@
             data: {
                 labels: [],
                 datasets: [
-                    { label: 'Kelembapan Tanah (%)', borderColor: '#2ecc71', backgroundColor: 'rgba(46, 204, 113, 0.1)', data: [], fill: true, tension: 0.3 },
-                    { label: 'Kelembapan Udara (%)', borderColor: '#3498db', backgroundColor: 'rgba(52, 152, 219, 0.1)', data: [], fill: true, tension: 0.3 }
+                    { label: 'Kelembapan Tanah (%)', borderColor: '#2d6a4f', backgroundColor: 'rgba(45, 106, 79, 0.15)', data: [], fill: true, tension: 0.3 },
+                    { label: 'Kelembapan Udara (%)', borderColor: '#0077b6', backgroundColor: 'rgba(0, 119, 182, 0.1)', data: [], fill: true, tension: 0.3 }
                 ]
             },
             options: { responsive: true, scales: { x: { title: { display: true, text: 'Waktu' } }, y: { beginAtZero: true, max: 100 } } }
@@ -239,7 +268,7 @@
             type: 'line',
             data: {
                 labels: [],
-                datasets: [ { label: 'Suhu (°C)', borderColor: '#e74c3c', backgroundColor: 'rgba(231, 76, 60, 0.15)', data: [], fill: true, tension: 0.3 } ]
+                datasets: [ { label: 'Suhu (°C)', borderColor: '#e63946', backgroundColor: 'rgba(230, 57, 70, 0.15)', data: [], fill: true, tension: 0.3 } ]
             },
             options: { responsive: true, scales: { x: { title: { display: true, text: 'Waktu' } }, y: { beginAtZero: true, max: 50 } } }
         });
@@ -277,7 +306,6 @@
                 lastSuhu = parseFloat(payload);
                 document.getElementById("val-suhu").innerText = lastSuhu.toFixed(1);
                 
-                // Update Badge Suhu
                 const bSuhu = document.getElementById("badge-suhu");
                 if (lastSuhu > 32) { bSuhu.innerText = "PANAS"; bSuhu.className = "cond-badge cond-danger"; }
                 else if (lastSuhu < 20) { bSuhu.innerText = "DINGIN"; bSuhu.className = "cond-badge cond-warn"; }
@@ -293,22 +321,18 @@
                 lastTanah = parseInt(payload);
                 document.getElementById("val-tanah").innerText = lastTanah;
 
-                // Update Badge Tanah
                 const bTanah = document.getElementById("badge-tanah");
                 if (lastTanah < 30) { bTanah.innerText = "KERING"; bTanah.className = "cond-badge cond-danger"; }
                 else { bTanah.innerText = "OPTIMAL"; bTanah.className = "cond-badge cond-good"; }
             }
 
-            // Cek Alert Banner Peringatan
             cekAlert();
 
-            // Inisialisasi Titik Pertama Grafik
             if (!grafikSudahInisialisasi && lastSuhu !== null && lastKelembapan !== null && lastTanah !== null) {
                 tambahDataGrafik();
                 grafikSudahInisialisasi = true;
             }
 
-            // Status LED
             if (topic === "smartfarm/status/pompa1") {
                 document.getElementById("led-air").className = "led-circle " + (payload === "ON" ? "led-on" : "");
                 document.getElementById("sw-air").checked = (payload === "ON");
@@ -338,7 +362,6 @@
             }
         }
 
-        // --- TIMER RUTIN UPDATE GRAFIK SETIAP 1 MENIT ---
         setInterval(function() {
             if (grafikSudahInisialisasi) {
                 tambahDataGrafik();
@@ -351,7 +374,6 @@
             const skrg = new Date();
             const jam = skrg.getHours().toString().padStart(2, '0') + ":" + skrg.getMinutes().toString().padStart(2, '0');
 
-            // Update Grafik 1
             kelembapanChart.data.labels.push(jam);
             kelembapanChart.data.datasets[0].data.push(lastTanah);
             kelembapanChart.data.datasets[1].data.push(lastKelembapan);
@@ -362,7 +384,6 @@
             }
             kelembapanChart.update();
 
-            // Update Grafik 2
             suhuChart.data.labels.push(jam);
             suhuChart.data.datasets[0].data.push(lastSuhu);
             if (suhuChart.data.labels.length > 20) {
