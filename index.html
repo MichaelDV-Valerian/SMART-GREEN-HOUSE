@@ -11,13 +11,13 @@
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
         
-        /* Background Nuansa Segar (Gradient Hijau Soft) */
+        /* Background Tema Hijau Hutan (Forest Nature) */
         body { 
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #e0f2f1 100%);
+            background: linear-gradient(135deg, #132a13 0%, #1a4314 40%, #2d5a27 100%);
             min-height: 100vh;
             margin: 0; 
             padding: 25px 20px; 
-            color: #1b4332; 
+            color: #ecf3ec; 
         }
         
         .header { 
@@ -26,21 +26,21 @@
             justify-content: space-between; 
             max-width: 950px; 
             margin: 0 auto 15px auto; 
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(19, 42, 19, 0.75);
             padding: 15px 20px;
             border-radius: 12px;
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(45, 106, 79, 0.15);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(116, 198, 157, 0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
         }
-        .header h1 { font-size: 22px; font-weight: 800; margin: 0; color: #2d6a4f; letter-spacing: 0.5px; }
+        .header h1 { font-size: 22px; font-weight: 800; margin: 0; color: #b7e4c7; letter-spacing: 0.5px; }
         .header-info { text-align: right; }
-        .live-clock { font-size: 13px; font-weight: 700; color: #40916c; }
-        .status-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #d8f3dc; color: #1b4332; display: inline-block; margin-top: 4px; border: 1px solid #74c69d; }
-        .online { background: #52b788; color: white; border-color: #40916c; box-shadow: 0 0 8px rgba(82, 183, 136, 0.4); }
+        .live-clock { font-size: 13px; font-weight: 700; color: #95d5b2; }
+        .status-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #2d5a27; color: #d8f3dc; display: inline-block; margin-top: 4px; border: 1px solid #52b788; }
+        .online { background: #38b000; color: white; border-color: #70e000; box-shadow: 0 0 10px rgba(112, 224, 0, 0.5); }
 
         /* Banner Alert */
-        .alert-banner { max-width: 950px; margin: 0 auto 15px auto; padding: 12px 15px; background: #ffbe0b; border-left: 5px solid #d90429; color: #2b2d42; font-size: 13px; font-weight: bold; border-radius: 8px; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .alert-banner { max-width: 950px; margin: 0 auto 15px auto; padding: 12px 15px; background: #d90429; color: #ffffff; font-size: 13px; font-weight: bold; border-radius: 8px; display: none; box-shadow: 0 4px 15px rgba(217, 4, 41, 0.3); }
 
         .dashboard-grid {
             display: grid;
@@ -50,55 +50,55 @@
             margin: 0 auto 20px auto;
         }
 
-        /* Kartu dengan aksen Greenhouse */
+        /* Kartu dengan Tema Hijau Gelap Elegan */
         .card { 
-            background: rgba(255, 255, 255, 0.85); 
+            background: rgba(24, 51, 24, 0.85); 
             border-radius: 12px; 
             padding: 20px; 
-            border: 1px solid rgba(116, 198, 157, 0.3); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04); 
-            backdrop-filter: blur(5px);
+            border: 1px solid rgba(149, 213, 178, 0.2); 
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2); 
+            backdrop-filter: blur(6px);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(45, 106, 79, 0.1); }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-        .card-title { font-size: 12px; font-weight: 800; color: #2d6a4f; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card-title { font-size: 12px; font-weight: 800; color: #95d5b2; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* Condition Badge */
         .cond-badge { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; }
-        .cond-good { background: #d8f3dc; color: #1b4332; border: 1px solid #74c69d; }
-        .cond-warn { background: #fff3bf; color: #f59f00; border: 1px solid #ffe066; }
-        .cond-danger { background: #ffe3e3; color: #e03131; border: 1px solid #ffa8a8; }
+        .cond-good { background: #1b4332; color: #70e000; border: 1px solid #38b000; }
+        .cond-warn { background: #5c3d11; color: #ffc107; border: 1px solid #ff9800; }
+        .cond-danger { background: #5c1111; color: #ff6b6b; border: 1px solid #f44336; }
 
         /* Tampilan Nilai Sensor */
-        .sensor-value { font-size: 34px; font-weight: 800; color: #081c15; }
-        .sensor-unit { font-size: 20px; color: #52b788; margin-left: 2px; }
+        .sensor-value { font-size: 34px; font-weight: 800; color: #ffffff; }
+        .sensor-unit { font-size: 20px; color: #70e000; margin-left: 2px; }
 
         /* LED Indikator Bulat */
         .led-container { display: flex; align-items: center; justify-content: space-between; }
-        .led-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #b7e4c7; background: #e8f5e9; transition: all 0.3s ease; }
-        .led-on { background: #52b788; border-color: #2d6a4f; box-shadow: 0 0 12px rgba(82, 183, 136, 0.8); }
+        .led-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #2d5a27; background: #132a13; transition: all 0.3s ease; }
+        .led-on { background: #70e000; border-color: #aacc00; box-shadow: 0 0 14px rgba(112, 224, 0, 0.9); }
 
         /* Switch Toggle */
         .switch-box { display: flex; align-items: center; justify-content: space-between; }
         .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #b7e4c7; transition: .3s; border-radius: 26px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: #40916c; }
-        input:checked + .slider:before { transform: translateX(22px); }
-        input:disabled + .slider { background-color: #e9ecef; cursor: not-allowed; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2d5a27; transition: .3s; border-radius: 26px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: #d8f3dc; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #38b000; }
+        input:checked + .slider:before { transform: translateX(22px); background-color: #ffffff; }
+        input:disabled + .slider { background-color: #1c3b1c; opacity: 0.5; cursor: not-allowed; }
 
-        .mode-text { font-size: 14px; font-weight: 800; color: #1b4332; }
+        .mode-text { font-size: 14px; font-weight: 800; color: #b7e4c7; }
 
         /* Area 2 Grafik */
         .charts-wrapper { max-width: 950px; margin: 0 auto 20px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 15px; }
-        .chart-card { background: rgba(255, 255, 255, 0.88); border-radius: 12px; padding: 20px; border: 1px solid rgba(116, 198, 157, 0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.04); backdrop-filter: blur(5px); }
+        .chart-card { background: rgba(24, 51, 24, 0.85); border-radius: 12px; padding: 20px; border: 1px solid rgba(149, 213, 178, 0.2); box-shadow: 0 6px 16px rgba(0,0,0,0.2); backdrop-filter: blur(6px); }
 
         /* Tombol Link Google Sheets Footer */
         .footer-action { max-width: 950px; margin: 0 auto; text-align: center; }
-        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #2d6a4f; color: white; padding: 12px 22px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 700; transition: all 0.2s; box-shadow: 0 4px 10px rgba(45, 106, 79, 0.25); }
-        .btn-gsheet:hover { background: #1b4332; transform: translateY(-2px); box-shadow: 0 6px 14px rgba(45, 106, 79, 0.35); }
+        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #38b000; color: #0b1d0b; padding: 12px 22px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 800; transition: all 0.2s; box-shadow: 0 4px 15px rgba(56, 176, 0, 0.3); }
+        .btn-gsheet:hover { background: #70e000; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(112, 224, 0, 0.4); }
 
         @media (max-width: 900px) {
             .charts-wrapper { grid-template-columns: 1fr; }
@@ -109,8 +109,8 @@
 
     <div class="header">
         <div>
-            <h1>🌿 SMART GREEN HOUSE</h1>
-            <div id="last-update" style="font-size: 11px; color: #40916c; margin-top: 2px; font-weight: 600;">Last Update: -</div>
+            <h1>🌲 SMART GREEN HOUSE</h1>
+            <div id="last-update" style="font-size: 11px; color: #74c69d; margin-top: 2px; font-weight: 600;">Last Update: -</div>
         </div>
         <div class="header-info">
             <div id="live-clock" class="live-clock">00:00:00 WIB</div>
@@ -153,10 +153,10 @@
         <div class="card">
             <div class="card-title" style="margin-bottom: 12px;">🚰 AIR (POMPA 1)</div>
             <div class="led-container">
-                <span style="font-size: 13px; color: #40916c; font-weight: 600;">Status Relay</span>
+                <span style="font-size: 13px; color: #95d5b2; font-weight: 600;">Status Relay</span>
                 <div id="led-air" class="led-circle"></div>
             </div>
-            <hr style="border: none; border-top: 1px solid #d8f3dc; margin: 12px 0;">
+            <hr style="border: none; border-top: 1px solid rgba(149, 213, 178, 0.2); margin: 12px 0;">
             <div class="switch-box" style="margin-bottom: 10px;">
                 <span style="font-size: 13px; font-weight: 600;">Mode: <b id="txt-mode-air" class="mode-text">AUTO</b></span>
                 <label class="switch">
@@ -165,7 +165,7 @@
                 </label>
             </div>
             <div class="switch-box">
-                <span style="font-size: 13px; color: #2d6a4f; font-weight: 600;">Saklar Manual</span>
+                <span style="font-size: 13px; color: #b7e4c7; font-weight: 600;">Saklar Manual</span>
                 <label class="switch">
                     <input type="checkbox" id="sw-air" onchange="toggleAir(this)" disabled>
                     <span class="slider"></span>
@@ -177,10 +177,10 @@
         <div class="card">
             <div class="card-title" style="margin-bottom: 12px;">🌀 KIPAS PENDINGIN</div>
             <div class="led-container">
-                <span style="font-size: 13px; color: #40916c; font-weight: 600;">Status Relay</span>
+                <span style="font-size: 13px; color: #95d5b2; font-weight: 600;">Status Relay</span>
                 <div id="led-kipas" class="led-circle"></div>
             </div>
-            <hr style="border: none; border-top: 1px solid #d8f3dc; margin: 12px 0;">
+            <hr style="border: none; border-top: 1px solid rgba(149, 213, 178, 0.2); margin: 12px 0;">
             <div class="switch-box" style="margin-bottom: 10px;">
                 <span style="font-size: 13px; font-weight: 600;">Mode: <b id="txt-mode-kipas" class="mode-text">AUTO</b></span>
                 <label class="switch">
@@ -189,7 +189,7 @@
                 </label>
             </div>
             <div class="switch-box">
-                <span style="font-size: 13px; color: #2d6a4f; font-weight: 600;">Saklar Manual</span>
+                <span style="font-size: 13px; color: #b7e4c7; font-weight: 600;">Saklar Manual</span>
                 <label class="switch">
                     <input type="checkbox" id="sw-kipas" onchange="toggleKipas(this)" disabled>
                     <span class="slider"></span>
@@ -201,12 +201,12 @@
         <div class="card">
             <div class="card-title" style="margin-bottom: 12px;">🧪 POMPA PUPUK (POMPA 2)</div>
             <div class="led-container">
-                <span style="font-size: 13px; color: #40916c; font-weight: 600;">Status Relay</span>
+                <span style="font-size: 13px; color: #95d5b2; font-weight: 600;">Status Relay</span>
                 <div id="led-pupuk" class="led-circle"></div>
             </div>
-            <hr style="border: none; border-top: 1px solid #d8f3dc; margin: 12px 0;">
+            <hr style="border: none; border-top: 1px solid rgba(149, 213, 178, 0.2); margin: 12px 0;">
             <div class="switch-box">
-                <span style="font-size: 13px; color: #2d6a4f; font-weight: 600;">Siram Pupuk (3 Detik)</span>
+                <span style="font-size: 13px; color: #b7e4c7; font-weight: 600;">Siram Pupuk (3 Detik)</span>
                 <label class="switch">
                     <input type="checkbox" id="sw-pupuk" onchange="togglePupuk(this)">
                     <span class="slider"></span>
@@ -248,27 +248,30 @@
             document.getElementById("live-clock").innerText = skrg.toLocaleTimeString('id-ID') + " WIB";
         }, 1000);
 
-        // --- KONFIGURASI GRAFIK 1: KELEMBAPAN ---
+        // --- KONFIGURASI GRAFIK 1 (TEMA HIJAU HUTAN) ---
+        Chart.defaults.color = '#b7e4c7';
+        Chart.defaults.borderColor = 'rgba(149, 213, 178, 0.15)';
+
         const ctxKelembapan = document.getElementById('kelembapanChart').getContext('2d');
         const kelembapanChart = new Chart(ctxKelembapan, {
             type: 'line',
             data: {
                 labels: [],
                 datasets: [
-                    { label: 'Kelembapan Tanah (%)', borderColor: '#2d6a4f', backgroundColor: 'rgba(45, 106, 79, 0.15)', data: [], fill: true, tension: 0.3 },
-                    { label: 'Kelembapan Udara (%)', borderColor: '#0077b6', backgroundColor: 'rgba(0, 119, 182, 0.1)', data: [], fill: true, tension: 0.3 }
+                    { label: 'Kelembapan Tanah (%)', borderColor: '#70e000', backgroundColor: 'rgba(112, 224, 0, 0.15)', data: [], fill: true, tension: 0.3 },
+                    { label: 'Kelembapan Udara (%)', borderColor: '#4cc9f0', backgroundColor: 'rgba(76, 201, 240, 0.15)', data: [], fill: true, tension: 0.3 }
                 ]
             },
             options: { responsive: true, scales: { x: { title: { display: true, text: 'Waktu' } }, y: { beginAtZero: true, max: 100 } } }
         });
 
-        // --- KONFIGURASI GRAFIK 2: SUHU ---
+        // --- KONFIGURASI GRAFIK 2 (TEMA SUHU) ---
         const ctxSuhu = document.getElementById('suhuChart').getContext('2d');
         const suhuChart = new Chart(ctxSuhu, {
             type: 'line',
             data: {
                 labels: [],
-                datasets: [ { label: 'Suhu (°C)', borderColor: '#e63946', backgroundColor: 'rgba(230, 57, 70, 0.15)', data: [], fill: true, tension: 0.3 } ]
+                datasets: [ { label: 'Suhu (°C)', borderColor: '#ff4d6d', backgroundColor: 'rgba(255, 77, 109, 0.15)', data: [], fill: true, tension: 0.3 } ]
             },
             options: { responsive: true, scales: { x: { title: { display: true, text: 'Waktu' } }, y: { beginAtZero: true, max: 50 } } }
         });
