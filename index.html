@@ -16,41 +16,57 @@
             background: linear-gradient(135deg, #132a13 0%, #1a4314 40%, #2d5a27 100%);
             min-height: 100vh;
             margin: 0; 
-            padding: 25px 20px; 
+            padding: 20px 30px; 
             color: #ecf3ec; 
         }
         
+        /* Layout Diperlebar Maksimal (Fullscreen Feel) */
         .header { 
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            max-width: 950px; 
+            max-width: 1400px; 
             margin: 0 auto 15px auto; 
             background: rgba(19, 42, 19, 0.75);
-            padding: 15px 20px;
+            padding: 15px 25px;
             border-radius: 12px;
             backdrop-filter: blur(8px);
             border: 1px solid rgba(116, 198, 157, 0.2);
             box-shadow: 0 4px 20px rgba(0,0,0,0.25);
         }
-        .header h1 { font-size: 22px; font-weight: 800; margin: 0; color: #b7e4c7; letter-spacing: 0.5px; }
-        .header-info { text-align: right; }
-        .live-clock { font-size: 13px; font-weight: 700; color: #95d5b2; }
-        .status-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #2d5a27; color: #d8f3dc; display: inline-block; margin-top: 4px; border: 1px solid #52b788; }
+        .header h1 { font-size: 24px; font-weight: 800; margin: 0; color: #b7e4c7; letter-spacing: 0.5px; }
+        .header-info { text-align: right; display: flex; align-items: center; gap: 15px; }
+        .live-clock { font-size: 14px; font-weight: 700; color: #95d5b2; }
+        .status-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #2d5a27; color: #d8f3dc; border: 1px solid #52b788; }
         .online { background: #38b000; color: white; border-color: #70e000; box-shadow: 0 0 10px rgba(112, 224, 0, 0.5); }
 
+        .btn-fullscreen {
+            background: rgba(149, 213, 178, 0.15);
+            border: 1px solid #52b788;
+            color: #b7e4c7;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-fullscreen:hover {
+            background: #38b000;
+            color: #0b1d0b;
+        }
+
         /* Banner Alert */
-        .alert-banner { max-width: 950px; margin: 0 auto 15px auto; padding: 12px 15px; background: #d90429; color: #ffffff; font-size: 13px; font-weight: bold; border-radius: 8px; display: none; box-shadow: 0 4px 15px rgba(217, 4, 41, 0.3); }
+        .alert-banner { max-width: 1400px; margin: 0 auto 15px auto; padding: 12px 15px; background: #d90429; color: #ffffff; font-size: 13px; font-weight: bold; border-radius: 8px; display: none; box-shadow: 0 4px 15px rgba(217, 4, 41, 0.3); }
 
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 15px;
-            max-width: 950px;
+            max-width: 1400px;
             margin: 0 auto 20px auto;
         }
 
-        /* Kartu dengan Tema Hijau Gelap */
         .card { 
             background: rgba(24, 51, 24, 0.85); 
             border-radius: 12px; 
@@ -64,22 +80,18 @@
         .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
         .card-title { font-size: 12px; font-weight: 800; color: #95d5b2; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* Condition Badge */
         .cond-badge { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; }
         .cond-good { background: #1b4332; color: #70e000; border: 1px solid #38b000; }
         .cond-warn { background: #5c3d11; color: #ffc107; border: 1px solid #ff9800; }
         .cond-danger { background: #5c1111; color: #ff6b6b; border: 1px solid #f44336; }
 
-        /* Tampilan Nilai Sensor */
-        .sensor-value { font-size: 34px; font-weight: 800; color: #ffffff; }
-        .sensor-unit { font-size: 20px; color: #70e000; margin-left: 2px; }
+        .sensor-value { font-size: 36px; font-weight: 800; color: #ffffff; }
+        .sensor-unit { font-size: 22px; color: #70e000; margin-left: 2px; }
 
-        /* LED Indikator Bulat */
         .led-container { display: flex; align-items: center; justify-content: space-between; }
         .led-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #2d5a27; background: #132a13; transition: all 0.3s ease; }
         .led-on { background: #70e000; border-color: #aacc00; box-shadow: 0 0 14px rgba(112, 224, 0, 0.9); }
 
-        /* Switch Toggle */
         .switch-box { display: flex; align-items: center; justify-content: space-between; }
         .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -91,13 +103,13 @@
 
         .mode-text { font-size: 14px; font-weight: 800; color: #b7e4c7; }
 
-        /* Area 2 Grafik */
-        .charts-wrapper { max-width: 950px; margin: 0 auto 20px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 15px; }
+        /* Area 2 Grafik Diperlebar */
+        .charts-wrapper { max-width: 1400px; margin: 0 auto 20px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(550px, 1fr)); gap: 15px; }
         .chart-card { background: rgba(24, 51, 24, 0.85); border-radius: 12px; padding: 20px; border: 1px solid rgba(149, 213, 178, 0.2); box-shadow: 0 6px 16px rgba(0,0,0,0.2); backdrop-filter: blur(6px); }
 
-        /* TABEL LOG DOCK ALA GOOGLE SHEETS */
+        /* TABEL LOG DOCK */
         .table-card { 
-            max-width: 950px; 
+            max-width: 1400px; 
             margin: 0 auto 20px auto; 
             background: rgba(24, 51, 24, 0.85); 
             border-radius: 12px; 
@@ -153,8 +165,7 @@
         }
         .log-table tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
 
-        /* Tombol Link Google Sheets Footer */
-        .footer-action { max-width: 950px; margin: 0 auto; text-align: center; }
+        .footer-action { max-width: 1400px; margin: 0 auto; text-align: center; }
         .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #38b000; color: #0b1d0b; padding: 12px 22px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 800; transition: all 0.2s; box-shadow: 0 4px 15px rgba(56, 176, 0, 0.3); }
         .btn-gsheet:hover { background: #70e000; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(112, 224, 0, 0.4); }
 
@@ -173,6 +184,7 @@
         <div class="header-info">
             <div id="live-clock" class="live-clock">00:00:00 WIB</div>
             <div id="status-badge" class="status-badge">Offline</div>
+            <button class="btn-fullscreen" onclick="toggleFullScreen()">⛶ Fullscreen</button>
         </div>
     </div>
 
@@ -277,12 +289,12 @@
     <div class="charts-wrapper">
         <div class="chart-card">
             <div class="card-title">💧 GRAFIK KELEMBAPAN (UPDATE TIAP 1 MENIT)</div>
-            <canvas id="kelembapanChart" height="150"></canvas>
+            <canvas id="kelembapanChart" height="130"></canvas>
         </div>
 
         <div class="chart-card">
             <div class="card-title">🌡️ GRAFIK SUHU UDARA (UPDATE TIAP 1 MENIT)</div>
-            <canvas id="suhuChart" height="150"></canvas>
+            <canvas id="suhuChart" height="130"></canvas>
         </div>
     </div>
 
@@ -327,6 +339,17 @@
         const clientId = "blynk_pro_chart_" + Math.random().toString(16).substr(2, 8);
 
         const client = new Paho.MQTT.Client(host, port, path, clientId);
+
+        // --- FUNGSI TOGGLE FULLSCREEN LAYAR ---
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
 
         setInterval(function() {
             const skrg = new Date();
@@ -458,12 +481,10 @@
             }
         }
 
-        // --- TIMER UPDATE GRAFIK SETIAP 1 MENIT ---
         setInterval(function() {
             if (grafikSudahInisialisasi) tambahDataGrafik();
         }, 60000);
 
-        // --- TIMER UPDATE TABEL LOG SETIAP 1 JAM (3600000 ms) ---
         setInterval(function() {
             if (tabelSudahInisialisasi) tambahBarisTabel();
         }, 3600000);
