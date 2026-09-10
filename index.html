@@ -6,6 +6,8 @@
     <title>SMART GREEN HOUSE</title>
     <!-- MQTT Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+    <!-- Chart.js Library untuk Grafik -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #f7f9fa; margin: 0; padding: 20px; color: #333; }
@@ -20,7 +22,7 @@
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 15px;
             max-width: 900px;
-            margin: 0 auto;
+            margin: 0 auto 20px auto;
         }
 
         .card { background: white; border-radius: 8px; padding: 18px; border: 1px solid #eaedf0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
@@ -46,6 +48,10 @@
         input:disabled + .slider { background-color: #f1f3f4; cursor: not-allowed; }
 
         .mode-text { font-size: 14px; font-weight: bold; color: #202124; }
+
+        /* Area Grafik */
+        .chart-container { max-width: 900px; margin: 0 auto; }
+        .chart-card { background: white; border-radius: 8px; padding: 20px; border: 1px solid #eaedf0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
     </style>
 </head>
 <body>
@@ -55,9 +61,8 @@
         <div id="status-badge" class="status-badge">Offline</div>
     </div>
 
+    <!-- GRID CARDS & SENSOR -->
     <div class="dashboard-grid">
-        
-        <!-- SENSOR DATA -->
         <div class="card">
             <div class="card-title">KELEMBABAN TANAH</div>
             <div class="sensor-value"><span id="val-tanah">0</span><span class="sensor-unit">%</span></div>
@@ -73,7 +78,7 @@
             <div class="sensor-value"><span id="val-kelembapan">0.0</span><span class="sensor-unit">%</span></div>
         </div>
 
-        <!-- POMPA AIR (POMPA 1) -->
+        <!-- POMPA AIR -->
         <div class="card">
             <div class="card-title">AIR (POMPA 1)</div>
             <div class="led-container">
@@ -121,7 +126,7 @@
             </div>
         </div>
 
-        <!-- POMPA PUPUK (POMPA 2) -->
+        <!-- POMPA PUPUK -->
         <div class="card">
             <div class="card-title">POMPA PUPUK (POMPA 2)</div>
             <div class="led-container">
@@ -137,16 +142,68 @@
                 </label>
             </div>
         </div>
+    </div>
 
+    <!-- AREA GRAFIK HISTORY -->
+    <div class="chart-container">
+        <div class="chart-card">
+            <div class="card-title" style="margin-bottom: 15px;">📈 GRAFIK RIWAYAT DATA SENSOR (REAL-TIME)</div>
+            <canvas id="historyChart" height="120"></canvas>
+        </div>
     </div>
 
     <script>
         const host = "broker.hivemq.com";
         const port = 8884;
         const path = "/mqtt";
-        const clientId = "blynk_no_gauge_" + Math.random().toString(16).substr(2, 8);
+        const clientId = "blynk_chart_" + Math.random().toString(16).substr(2, 8);
 
         const client = new Paho.MQTT.Client(host, port, path, clientId);
+
+        // --- KONFIGURASI GRAFIK CHART.JS ---
+        const ctx = document.getElementById('historyChart').getContext('2d');
+        const historyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // Waktu
+                datasets: [
+                    {
+                        label: 'Suhu (°C)',
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        data: [],
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Kelembapan Udara (%)',
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        data: [],
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Kelembapan Tanah (%)',
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        data: [],
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { title: { display: true, text: 'Waktu' } },
+                    y: { beginAtZero: true, max: 100 }
+                }
+            }
+        });
+
+        // Simpan variabel suhu, humidity, tanah terakhir
+        let lastSuhu = null, lastKelembapan = null, lastTanah = null;
 
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
@@ -177,26 +234,61 @@
             const payload = message.payloadString;
 
             if (topic === "smartfarm/data/suhu") {
-                document.getElementById("val-suhu").innerText = parseFloat(payload).toFixed(1);
+                lastSuhu = parseFloat(payload);
+                document.getElementById("val-suhu").innerText = lastSuhu.toFixed(1);
             }
             if (topic === "smartfarm/data/kelembapan") {
-                document.getElementById("val-kelembapan").innerText = parseFloat(payload).toFixed(1);
+                lastKelembapan = parseFloat(payload);
+                document.getElementById("val-kelembapan").innerText = lastKelembapan.toFixed(1);
             }
             if (topic === "smartfarm/data/tanah") {
-                document.getElementById("val-tanah").innerText = payload;
+                lastTanah = parseInt(payload);
+                document.getElementById("val-tanah").innerText = lastTanah;
+                
+                // Tambahkan titik data baru ke grafik setiap data tanah diterima
+                tambahDataGrafik();
             }
 
-            // Status LED Bulat
+            // Status LED
             if (topic === "smartfarm/status/pompa1") {
                 document.getElementById("led-air").className = "led-circle " + (payload === "ON" ? "led-on" : "");
+                document.getElementById("sw-air").checked = (payload === "ON");
             }
             if (topic === "smartfarm/status/kipas") {
                 document.getElementById("led-kipas").className = "led-circle " + (payload === "ON" ? "led-on" : "");
+                document.getElementById("sw-kipas").checked = (payload === "ON");
             }
             if (topic === "smartfarm/status/pompa2") {
                 document.getElementById("led-pupuk").className = "led-circle " + (payload === "ON" ? "led-on" : "");
                 if (payload === "OFF") document.getElementById("sw-pupuk").checked = false;
             }
+        }
+
+        function tambahDataGrafik() {
+            if (lastSuhu === null || lastKelembapan === null || lastTanah === null) return;
+
+            const skrg = new Date();
+            const jam = skrg.getHours().toString().padStart(2, '0') + ":" + 
+                        skrg.getMinutes().toString().padStart(2, '0') + ":" + 
+                        skrg.getSeconds().toString().padStart(2, '0');
+
+            // Tambahkan Label Jam
+            historyChart.data.labels.push(jam);
+
+            // Tambahkan Data Sensor
+            historyChart.data.datasets[0].data.push(lastSuhu);
+            historyChart.data.datasets[1].data.push(lastKelembapan);
+            historyChart.data.datasets[2].data.push(lastTanah);
+
+            // Batasi grafik hanya menyimpan 15 titik data terakhir agar ringan
+            if (historyChart.data.labels.length > 15) {
+                historyChart.data.labels.shift();
+                historyChart.data.datasets[0].data.shift();
+                historyChart.data.datasets[1].data.shift();
+                historyChart.data.datasets[2].data.shift();
+            }
+
+            historyChart.update();
         }
 
         function publish(topic, val) {
