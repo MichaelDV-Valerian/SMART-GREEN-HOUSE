@@ -522,22 +522,30 @@
             if (tbody.children.length > 15) tbody.removeChild(tbody.children[0]);
         }
 
-        function exportTableToCSV(filename) {
-            let csv = [];
-            let rows = document.querySelectorAll("#table-log tr");
-            for (let i = 0; i < rows.length; i++) {
-                let row = [], cols = rows[i].querySelectorAll("td, th");
-                for (let j = 0; j < cols.length; j++) row.push(cols[j].innerText);
-                csv.push(row.join(","));
-            }
-            let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
-            let downloadLink = document.createElement("a");
-            downloadLink.download = filename;
-            downloadLink.href = window.URL.createObjectURL(csvFile);
-            downloadLink.style.display = "none";
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
+       function exportTableToCSV(filename) {
+    let csv = [];
+    let rows = document.querySelectorAll("#table-log tr");
+    
+    for (let i = 0; i < rows.length; i++) {
+        let row = [], cols = rows[i].querySelectorAll("td, th");
+        for (let j = 0; j < cols.length; j++) {
+            // Bersihkan teks dari karakter aneh dan pemisah
+            let text = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").trim();
+            row.push(`"${text}"`);
         }
+        // Menggunakan titik koma (;) agar Excel otomatis memisahkannya ke dalam kolom tersendiri
+        csv.push(row.join(";"));
+    }
+
+    // Menambahkan \uFEFF (UTF-8 BOM) agar simbol °C dibaca normal tanpa karakter Â
+    let csvFile = new Blob(["\uFEFF" + csv.join("\n")], {type: "text/csv;charset=utf-8;"});
+    let downloadLink = document.createElement("a");
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+}
 
         function tambahDataGrafik() {
             if (lastSuhu === null || lastKelembapan === null || lastTanah === null) return;
