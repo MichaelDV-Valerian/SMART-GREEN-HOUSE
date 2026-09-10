@@ -12,10 +12,15 @@
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #f7f9fa; margin: 0; padding: 20px; color: #333; }
         
-        .header { display: flex; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto 20px auto; }
+        .header { display: flex; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto 10px auto; }
         .header h1 { font-size: 22px; font-weight: 800; margin: 0; }
-        .status-badge { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 12px; background: #e0e0e0; color: #666; }
+        .header-info { text-align: right; }
+        .live-clock { font-size: 13px; font-weight: 600; color: #5f6368; }
+        .status-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: #e0e0e0; color: #666; display: inline-block; margin-top: 4px; }
         .online { background: #e6f4ea; color: #137333; }
+
+        /* Banner Alert */
+        .alert-banner { max-width: 900px; margin: 0 auto 15px auto; padding: 12px 15px; background: #fce8e6; border-left: 5px solid #d93025; color: #c5221f; font-size: 13px; font-weight: bold; border-radius: 6px; display: none; }
 
         .dashboard-grid {
             display: grid;
@@ -25,8 +30,15 @@
             margin: 0 auto 20px auto;
         }
 
-        .card { background: white; border-radius: 8px; padding: 18px; border: 1px solid #eaedf0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
-        .card-title { font-size: 11px; font-weight: 700; color: #70757a; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .card { background: white; border-radius: 8px; padding: 18px; border: 1px solid #eaedf0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); position: relative; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .card-title { font-size: 11px; font-weight: 700; color: #70757a; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Condition Badge (IDEAL / KERING / PANAS) */
+        .cond-badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+        .cond-good { background: #e6f4ea; color: #137333; }
+        .cond-warn { background: #fef7e0; color: #b06000; }
+        .cond-danger { background: #fce8e6; color: #c5221f; }
 
         /* Tampilan Nilai Sensor */
         .sensor-value { font-size: 32px; font-weight: bold; color: #202124; }
@@ -50,8 +62,13 @@
         .mode-text { font-size: 14px; font-weight: bold; color: #202124; }
 
         /* Area 2 Grafik */
-        .charts-wrapper { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 15px; }
+        .charts-wrapper { max-width: 900px; margin: 0 auto 20px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 15px; }
         .chart-card { background: white; border-radius: 8px; padding: 18px; border: 1px solid #eaedf0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+
+        /* Tombol Link Google Sheets Footer */
+        .footer-action { max-width: 900px; margin: 0 auto; text-align: center; }
+        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #137333; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; transition: background 0.2s; }
+        .btn-gsheet:hover { background: #0d5224; }
 
         @media (max-width: 900px) {
             .charts-wrapper { grid-template-columns: 1fr; }
@@ -61,30 +78,50 @@
 <body>
 
     <div class="header">
-        <h1>SMART GREEN HOUSE</h1>
-        <div id="status-badge" class="status-badge">Offline</div>
+        <div>
+            <h1>🪴 SMART GREEN HOUSE</h1>
+            <div id="last-update" style="font-size: 11px; color: #70757a; margin-top: 2px;">Last Update: -</div>
+        </div>
+        <div class="header-info">
+            <div id="live-clock" class="live-clock">00:00:00 WIB</div>
+            <div id="status-badge" class="status-badge">Offline</div>
+        </div>
+    </div>
+
+    <!-- BANNER PERINGATAN DARURAT -->
+    <div id="alert-banner" class="alert-banner">
+        ⚠️ PERINGATAN: <span id="alert-msg">-</span>
     </div>
 
     <!-- GRID CARDS & SENSOR -->
     <div class="dashboard-grid">
         <div class="card">
-            <div class="card-title">KELEMBABAN TANAH</div>
+            <div class="card-header">
+                <span class="card-title">🌱 KELEMBABAN TANAH</span>
+                <span id="badge-tanah" class="cond-badge cond-good">OPTIMAL</span>
+            </div>
             <div class="sensor-value"><span id="val-tanah">0</span><span class="sensor-unit">%</span></div>
         </div>
 
         <div class="card">
-            <div class="card-title">SUHU UDARA</div>
+            <div class="card-header">
+                <span class="card-title">🌡️ SUHU UDARA</span>
+                <span id="badge-suhu" class="cond-badge cond-good">IDEAL</span>
+            </div>
             <div class="sensor-value"><span id="val-suhu">0.0</span><span class="sensor-unit">°C</span></div>
         </div>
 
         <div class="card">
-            <div class="card-title">KELEMBAPAN UDARA</div>
+            <div class="card-header">
+                <span class="card-title">💧 KELEMBAPAN UDARA</span>
+                <span id="badge-kelembapan" class="cond-badge cond-good">NORMAL</span>
+            </div>
             <div class="sensor-value"><span id="val-kelembapan">0.0</span><span class="sensor-unit">%</span></div>
         </div>
 
         <!-- POMPA AIR -->
         <div class="card">
-            <div class="card-title">AIR (POMPA 1)</div>
+            <div class="card-title" style="margin-bottom: 12px;">🚰 AIR (POMPA 1)</div>
             <div class="led-container">
                 <span style="font-size: 13px; color: #5f6368;">Status Relay</span>
                 <div id="led-air" class="led-circle"></div>
@@ -108,7 +145,7 @@
 
         <!-- KIPAS -->
         <div class="card">
-            <div class="card-title">KIPAS PENDINGIN</div>
+            <div class="card-title" style="margin-bottom: 12px;">🌀 KIPAS PENDINGIN</div>
             <div class="led-container">
                 <span style="font-size: 13px; color: #5f6368;">Status Relay</span>
                 <div id="led-kipas" class="led-circle"></div>
@@ -132,7 +169,7 @@
 
         <!-- POMPA PUPUK -->
         <div class="card">
-            <div class="card-title">POMPA PUPUK (POMPA 2)</div>
+            <div class="card-title" style="margin-bottom: 12px;">🧪 POMPA PUPUK (POMPA 2)</div>
             <div class="led-container">
                 <span style="font-size: 13px; color: #5f6368;">Status Relay</span>
                 <div id="led-pupuk" class="led-circle"></div>
@@ -150,98 +187,70 @@
 
     <!-- AREA 2 GRAFIK SEJAJAR -->
     <div class="charts-wrapper">
-        <!-- GRAFIK 1: KELEMBAPAN TANAH & UDARA -->
         <div class="chart-card">
             <div class="card-title">💧 GRAFIK KELEMBAPAN (UPDATE TIAP 1 MENIT)</div>
             <canvas id="kelembapanChart" height="150"></canvas>
         </div>
 
-        <!-- GRAFIK 2: SUHU UDARA -->
         <div class="chart-card">
             <div class="card-title">🌡️ GRAFIK SUHU UDARA (UPDATE TIAP 1 MENIT)</div>
             <canvas id="suhuChart" height="150"></canvas>
         </div>
     </div>
 
+    <!-- TOMBOL BUKA LOG DATA GOOGLE SHEETS -->
+    <div class="footer-action">
+        <a href="https://docs.google.com/spreadsheets" target="_blank" class="btn-gsheet">
+            📊 Buka Rekap Data Log (Google Sheets)
+        </a>
+    </div>
+
     <script>
         const host = "broker.hivemq.com";
         const port = 8884;
         const path = "/mqtt";
-        const clientId = "blynk_1min_chart_" + Math.random().toString(16).substr(2, 8);
+        const clientId = "blynk_pro_chart_" + Math.random().toString(16).substr(2, 8);
 
         const client = new Paho.MQTT.Client(host, port, path, clientId);
 
-        // --- KONFIGURASI GRAFIK 1: KELEMBAPAN (TANAH + UDARA) ---
+        // --- UPDATE JAM REAL-TIME ---
+        setInterval(function() {
+            const skrg = new Date();
+            document.getElementById("live-clock").innerText = skrg.toLocaleTimeString('id-ID') + " WIB";
+        }, 1000);
+
+        // --- KONFIGURASI GRAFIK 1: KELEMBAPAN ---
         const ctxKelembapan = document.getElementById('kelembapanChart').getContext('2d');
         const kelembapanChart = new Chart(ctxKelembapan, {
             type: 'line',
             data: {
                 labels: [],
                 datasets: [
-                    {
-                        label: 'Kelembapan Tanah (%)',
-                        borderColor: '#2ecc71',
-                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                        data: [],
-                        fill: true,
-                        tension: 0.3
-                    },
-                    {
-                        label: 'Kelembapan Udara (%)',
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        data: [],
-                        fill: true,
-                        tension: 0.3
-                    }
+                    { label: 'Kelembapan Tanah (%)', borderColor: '#2ecc71', backgroundColor: 'rgba(46, 204, 113, 0.1)', data: [], fill: true, tension: 0.3 },
+                    { label: 'Kelembapan Udara (%)', borderColor: '#3498db', backgroundColor: 'rgba(52, 152, 219, 0.1)', data: [], fill: true, tension: 0.3 }
                 ]
             },
-            options: {
-                responsive: true,
-                scales: {
-                    x: { title: { display: true, text: 'Waktu' } },
-                    y: { beginAtZero: true, max: 100 }
-                }
-            }
+            options: { responsive: true, scales: { x: { title: { display: true, text: 'Waktu' } }, y: { beginAtZero: true, max: 100 } } }
         });
 
-        // --- KONFIGURASI GRAFIK 2: SUHU UDARA (SENDIRI) ---
+        // --- KONFIGURASI GRAFIK 2: SUHU ---
         const ctxSuhu = document.getElementById('suhuChart').getContext('2d');
         const suhuChart = new Chart(ctxSuhu, {
             type: 'line',
             data: {
                 labels: [],
-                datasets: [
-                    {
-                        label: 'Suhu (°C)',
-                        borderColor: '#e74c3c',
-                        backgroundColor: 'rgba(231, 76, 60, 0.15)',
-                        data: [],
-                        fill: true,
-                        tension: 0.3
-                    }
-                ]
+                datasets: [ { label: 'Suhu (°C)', borderColor: '#e74c3c', backgroundColor: 'rgba(231, 76, 60, 0.15)', data: [], fill: true, tension: 0.3 } ]
             },
-            options: {
-                responsive: true,
-                scales: {
-                    x: { title: { display: true, text: 'Waktu' } },
-                    y: { beginAtZero: true, max: 50 }
-                }
-            }
+            options: { responsive: true, scales: { x: { title: { display: true, text: 'Waktu' } }, y: { beginAtZero: true, max: 50 } } }
         });
 
         let lastSuhu = null, lastKelembapan = null, lastTanah = null;
+        let grafikSudahInisialisasi = false;
 
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
 
-        client.connect({ 
-            onSuccess: onConnect,
-            useSSL: true,
-            timeout: 5,
-            onFailure: function() { setTimeout(hubungkan, 5000); }
-        });
+        client.connect({ onSuccess: onConnect, useSSL: true, timeout: 5, onFailure: function() { setTimeout(hubungkan, 5000); } });
 
         function hubungkan() { client.connect({ onSuccess: onConnect, useSSL: true }); }
 
@@ -261,21 +270,45 @@
             const topic = message.destinationName;
             const payload = message.payloadString;
 
-            // Angka teks kartu sensor TETAP UPDATE REAL-TIME (tiap detik)
+            const skrg = new Date();
+            document.getElementById("last-update").innerText = "Last Update: " + skrg.toLocaleTimeString('id-ID');
+
             if (topic === "smartfarm/data/suhu") {
                 lastSuhu = parseFloat(payload);
                 document.getElementById("val-suhu").innerText = lastSuhu.toFixed(1);
+                
+                // Update Badge Suhu
+                const bSuhu = document.getElementById("badge-suhu");
+                if (lastSuhu > 32) { bSuhu.innerText = "PANAS"; bSuhu.className = "cond-badge cond-danger"; }
+                else if (lastSuhu < 20) { bSuhu.innerText = "DINGIN"; bSuhu.className = "cond-badge cond-warn"; }
+                else { bSuhu.innerText = "IDEAL"; bSuhu.className = "cond-badge cond-good"; }
             }
+
             if (topic === "smartfarm/data/kelembapan") {
                 lastKelembapan = parseFloat(payload);
                 document.getElementById("val-kelembapan").innerText = lastKelembapan.toFixed(1);
             }
+
             if (topic === "smartfarm/data/tanah") {
                 lastTanah = parseInt(payload);
                 document.getElementById("val-tanah").innerText = lastTanah;
+
+                // Update Badge Tanah
+                const bTanah = document.getElementById("badge-tanah");
+                if (lastTanah < 30) { bTanah.innerText = "KERING"; bTanah.className = "cond-badge cond-danger"; }
+                else { bTanah.innerText = "OPTIMAL"; bTanah.className = "cond-badge cond-good"; }
             }
 
-            // Status LED Bulat
+            // Cek Alert Banner Peringatan
+            cekAlert();
+
+            // Inisialisasi Titik Pertama Grafik
+            if (!grafikSudahInisialisasi && lastSuhu !== null && lastKelembapan !== null && lastTanah !== null) {
+                tambahDataGrafik();
+                grafikSudahInisialisasi = true;
+            }
+
+            // Status LED
             if (topic === "smartfarm/status/pompa1") {
                 document.getElementById("led-air").className = "led-circle " + (payload === "ON" ? "led-on" : "");
                 document.getElementById("sw-air").checked = (payload === "ON");
@@ -290,23 +323,38 @@
             }
         }
 
-        // --- TIMER KHUSUS UNTUK UPDATE GRAFIK SETIAP 1 MENIT (60000 ms) ---
+        function cekAlert() {
+            const banner = document.getElementById("alert-banner");
+            const alertMsg = document.getElementById("alert-msg");
+            
+            if (lastSuhu > 32) {
+                alertMsg.innerText = "Suhu udara terlalu tinggi (" + lastSuhu + "°C)! Kipas pendingin perlu diaktifkan.";
+                banner.style.display = "block";
+            } else if (lastTanah < 30) {
+                alertMsg.innerText = "Kelembapan tanah kering (" + lastTanah + "%)! Pompa penyiram perlu aktif.";
+                banner.style.display = "block";
+            } else {
+                banner.style.display = "none";
+            }
+        }
+
+        // --- TIMER RUTIN UPDATE GRAFIK SETIAP 1 MENIT ---
         setInterval(function() {
-            tambahDataGrafik();
+            if (grafikSudahInisialisasi) {
+                tambahDataGrafik();
+            }
         }, 60000);
 
         function tambahDataGrafik() {
             if (lastSuhu === null || lastKelembapan === null || lastTanah === null) return;
 
             const skrg = new Date();
-            const jam = skrg.getHours().toString().padStart(2, '0') + ":" + 
-                        skrg.getMinutes().toString().padStart(2, '0');
+            const jam = skrg.getHours().toString().padStart(2, '0') + ":" + skrg.getMinutes().toString().padStart(2, '0');
 
-            // --- Update Grafik 1 (Kelembapan Tanah & Udara) ---
+            // Update Grafik 1
             kelembapanChart.data.labels.push(jam);
             kelembapanChart.data.datasets[0].data.push(lastTanah);
             kelembapanChart.data.datasets[1].data.push(lastKelembapan);
-
             if (kelembapanChart.data.labels.length > 20) {
                 kelembapanChart.data.labels.shift();
                 kelembapanChart.data.datasets[0].data.shift();
@@ -314,10 +362,9 @@
             }
             kelembapanChart.update();
 
-            // --- Update Grafik 2 (Suhu Sendiri) ---
+            // Update Grafik 2
             suhuChart.data.labels.push(jam);
             suhuChart.data.datasets[0].data.push(lastSuhu);
-
             if (suhuChart.data.labels.length > 20) {
                 suhuChart.data.labels.shift();
                 suhuChart.data.datasets[0].data.shift();
@@ -332,23 +379,19 @@
         }
 
         function togglePupuk(el) { publish("smartfarm/cmd/pompa2", el.checked ? "1" : "0"); }
-        
         function toggleModeAir(el) {
             const isManual = el.checked;
             document.getElementById("txt-mode-air").innerText = isManual ? "MANUAL" : "AUTO";
             document.getElementById("sw-air").disabled = !isManual;
             publish("smartfarm/cmd/pompa1_mode", isManual ? "MANUAL" : "AUTO");
         }
-
         function toggleAir(el) { publish("smartfarm/cmd/pompa1_sw", el.checked ? "1" : "0"); }
-
         function toggleModeKipas(el) {
             const isManual = el.checked;
             document.getElementById("txt-mode-kipas").innerText = isManual ? "MANUAL" : "AUTO";
             document.getElementById("sw-kipas").disabled = !isManual;
             publish("smartfarm/cmd/kipas_mode", isManual ? "MANUAL" : "AUTO");
         }
-
         function toggleKipas(el) { publish("smartfarm/cmd/kipas_sw", el.checked ? "1" : "0"); }
     </script>
 </body>
