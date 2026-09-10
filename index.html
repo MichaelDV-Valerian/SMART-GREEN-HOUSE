@@ -11,7 +11,6 @@
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
         
-        /* Background Tema Hijau Hutan (Forest Nature) */
         body { 
             background: linear-gradient(135deg, #132a13 0%, #1a4314 40%, #2d5a27 100%);
             min-height: 100vh;
@@ -20,7 +19,6 @@
             color: #ecf3ec; 
         }
         
-        /* Header Full Width */
         .header { 
             display: flex; 
             align-items: center; 
@@ -75,7 +73,6 @@
             gap: 20px;
         }
 
-        /* WIDGET CARD STYLING */
         .card { 
             background: rgba(24, 51, 24, 0.85); 
             border-radius: 12px; 
@@ -97,7 +94,6 @@
         .cond-warn { background: #5c3d11; color: #ffc107; border: 1px solid #ff9800; }
         .cond-danger { background: #5c1111; color: #ff6b6b; border: 1px solid #f44336; }
 
-        /* GAUGE CONTAINER STYLING */
         .gauge-box {
             position: relative;
             width: 100%;
@@ -131,7 +127,6 @@
 
         .mode-text { font-size: 13px; font-weight: 800; color: #b7e4c7; }
 
-        /* WIDGET TABEL */
         .table-card { 
             background: rgba(24, 51, 24, 0.85); 
             border-radius: 12px; 
@@ -219,7 +214,6 @@
         
         <!-- BARIS 1: MONITORING DATA SENSOR DENGAN VISUAL GAUGE (3 KOLOM SIMETRIS) -->
         <div class="grid-3-col">
-            <!-- GAUGE KELEMBABAN TANAH -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">🌱 KELEMBABAN TANAH</span>
@@ -231,7 +225,6 @@
                 </div>
             </div>
 
-            <!-- GAUGE SUHU UDARA -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">🌡️ SUHU UDARA</span>
@@ -243,7 +236,6 @@
                 </div>
             </div>
 
-            <!-- GAUGE KELEMBAPAN UDARA -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">💧 KELEMBAPAN UDARA</span>
@@ -269,7 +261,8 @@
                 <div class="switch-box" style="margin-bottom: 8px;">
                     <span style="font-size: 12px; font-weight: 600;">Mode: <b id="txt-mode-air" class="mode-text">AUTO</b></span>
                     <label class="switch">
-                        <input type="checkbox" id="sw-mode-air" onchange="toggleModeAir(this)">
+                        <!-- Default Checked = AUTO (Hijau) -->
+                        <input type="checkbox" id="sw-mode-air" onchange="toggleModeAir(this)" checked>
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -293,7 +286,8 @@
                 <div class="switch-box" style="margin-bottom: 8px;">
                     <span style="font-size: 12px; font-weight: 600;">Mode: <b id="txt-mode-kipas" class="mode-text">AUTO</b></span>
                     <label class="switch">
-                        <input type="checkbox" id="sw-mode-kipas" onchange="toggleModeKipas(this)">
+                        <!-- Default Checked = AUTO (Hijau) -->
+                        <input type="checkbox" id="sw-mode-kipas" onchange="toggleModeKipas(this)" checked>
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -324,7 +318,7 @@
             </div>
         </div>
 
-        <!-- BARIS 3: GRAFIK MONITORING (2 KOLOM SIMETRIS 50% - 50%) -->
+        <!-- BARIS 3: GRAFIK MONITORING (2 KOLOM SIMETRIS) -->
         <div class="grid-2-col">
             <div class="card">
                 <div class="card-title" style="margin-bottom: 15px;">💧 GRAFIK KELEMBAPAN (UPDATE TIAP 1 MENIT)</div>
@@ -399,7 +393,6 @@
         Chart.defaults.color = '#b7e4c7';
         Chart.defaults.borderColor = 'rgba(149, 213, 178, 0.15)';
 
-        // --- FUNGSI MEMBUAT SEMI-DONUT GAUGE ---
         function createGauge(canvasId, color) {
             const ctx = document.getElementById(canvasId).getContext('2d');
             return new Chart(ctx, {
@@ -422,7 +415,6 @@
             });
         }
 
-        // Inisialisasi 3 Gauge Sensor
         const gaugeTanah = createGauge('gaugeTanahCanvas', '#70e000');
         const gaugeSuhu = createGauge('gaugeSuhuCanvas', '#ff4d6d');
         const gaugeUdara = createGauge('gaugeUdaraCanvas', '#4cc9f0');
@@ -433,7 +425,6 @@
             gaugeObj.update();
         }
 
-        // --- GRAFIK LINE ---
         const ctxKelembapan = document.getElementById('kelembapanChart').getContext('2d');
         const kelembapanChart = new Chart(ctxKelembapan, {
             type: 'line',
@@ -491,7 +482,7 @@
             if (topic === "smartfarm/data/suhu") {
                 lastSuhu = parseFloat(payload);
                 document.getElementById("val-suhu").innerText = lastSuhu.toFixed(1);
-                updateGauge(gaugeSuhu, lastSuhu, 50); // Scale Max Suhu 50°C
+                updateGauge(gaugeSuhu, lastSuhu, 50);
                 
                 const bSuhu = document.getElementById("badge-suhu");
                 if (lastSuhu > 32) { bSuhu.innerText = "PANAS"; bSuhu.className = "cond-badge cond-danger"; }
@@ -502,13 +493,13 @@
             if (topic === "smartfarm/data/kelembapan") {
                 lastKelembapan = parseFloat(payload);
                 document.getElementById("val-kelembapan").innerText = lastKelembapan.toFixed(1);
-                updateGauge(gaugeUdara, lastKelembapan, 100); // Scale Max 100%
+                updateGauge(gaugeUdara, lastKelembapan, 100);
             }
 
             if (topic === "smartfarm/data/tanah") {
                 lastTanah = parseInt(payload);
                 document.getElementById("val-tanah").innerText = lastTanah;
-                updateGauge(gaugeTanah, lastTanah, 100); // Scale Max 100%
+                updateGauge(gaugeTanah, lastTanah, 100);
 
                 const bTanah = document.getElementById("badge-tanah");
                 if (lastTanah < 30) { bTanah.innerText = "KERING"; bTanah.className = "cond-badge cond-danger"; }
@@ -637,19 +628,24 @@
         }
 
         function togglePupuk(el) { publish("smartfarm/cmd/pompa2", el.checked ? "1" : "0"); }
+        
+        // --- PERBAIKAN LOGIKA SWITCH MODE ---
         function toggleModeAir(el) {
-            const isManual = el.checked;
-            document.getElementById("txt-mode-air").innerText = isManual ? "MANUAL" : "AUTO";
-            document.getElementById("sw-air").disabled = !isManual;
-            publish("smartfarm/cmd/pompa1_mode", isManual ? "MANUAL" : "AUTO");
+            const isAuto = el.checked; // Switch HIJAU (ON) = AUTO
+            document.getElementById("txt-mode-air").innerText = isAuto ? "AUTO" : "MANUAL";
+            document.getElementById("sw-air").disabled = isAuto;
+            publish("smartfarm/cmd/pompa1_mode", isAuto ? "AUTO" : "MANUAL");
         }
+
         function toggleAir(el) { publish("smartfarm/cmd/pompa1_sw", el.checked ? "1" : "0"); }
+
         function toggleModeKipas(el) {
-            const isManual = el.checked;
-            document.getElementById("txt-mode-kipas").innerText = isManual ? "MANUAL" : "AUTO";
-            document.getElementById("sw-kipas").disabled = !isManual;
-            publish("smartfarm/cmd/kipas_mode", isManual ? "MANUAL" : "AUTO");
+            const isAuto = el.checked; // Switch HIJAU (ON) = AUTO
+            document.getElementById("txt-mode-kipas").innerText = isAuto ? "AUTO" : "MANUAL";
+            document.getElementById("sw-kipas").disabled = isAuto;
+            publish("smartfarm/cmd/kipas_mode", isAuto ? "AUTO" : "MANUAL");
         }
+
         function toggleKipas(el) { publish("smartfarm/cmd/kipas_sw", el.checked ? "1" : "0"); }
     </script>
 </body>
