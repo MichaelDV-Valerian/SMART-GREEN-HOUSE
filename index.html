@@ -20,13 +20,13 @@
             color: #ecf3ec; 
         }
         
-        /* Layout Diperlebar Maksimal (Fullscreen Feel) */
+        /* Header Full Width */
         .header { 
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
             max-width: 1400px; 
-            margin: 0 auto 15px auto; 
+            margin: 0 auto 20px auto; 
             background: rgba(19, 42, 19, 0.75);
             padding: 15px 25px;
             border-radius: 12px;
@@ -51,22 +51,34 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn-fullscreen:hover {
-            background: #38b000;
-            color: #0b1d0b;
-        }
+        .btn-fullscreen:hover { background: #38b000; color: #0b1d0b; }
 
-        /* Banner Alert */
-        .alert-banner { max-width: 1400px; margin: 0 auto 15px auto; padding: 12px 15px; background: #d90429; color: #ffffff; font-size: 13px; font-weight: bold; border-radius: 8px; display: none; box-shadow: 0 4px 15px rgba(217, 4, 41, 0.3); }
+        .alert-banner { max-width: 1400px; margin: 0 auto 20px auto; padding: 12px 15px; background: #d90429; color: #ffffff; font-size: 13px; font-weight: bold; border-radius: 8px; display: none; box-shadow: 0 4px 15px rgba(217, 4, 41, 0.3); }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
+        /* Container Pembungkus Dashboard */
+        .dashboard-container {
             max-width: 1400px;
-            margin: 0 auto 20px auto;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
+        /* GRID SIMETRIS 3 KOLOM SAMA LEBAR */
+        .grid-3-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        /* GRID SIMETRIS 2 KOLOM SAMA LEBAR (50% - 50%) */
+        .grid-2-col {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        /* WIDGET CARD STYLING */
         .card { 
             background: rgba(24, 51, 24, 0.85); 
             border-radius: 12px; 
@@ -74,6 +86,9 @@
             border: 1px solid rgba(149, 213, 178, 0.2); 
             box-shadow: 0 6px 16px rgba(0,0,0,0.2); 
             backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
@@ -85,32 +100,26 @@
         .cond-warn { background: #5c3d11; color: #ffc107; border: 1px solid #ff9800; }
         .cond-danger { background: #5c1111; color: #ff6b6b; border: 1px solid #f44336; }
 
-        .sensor-value { font-size: 36px; font-weight: 800; color: #ffffff; }
+        .sensor-value { font-size: 38px; font-weight: 800; color: #ffffff; margin-top: 5px; }
         .sensor-unit { font-size: 22px; color: #70e000; margin-left: 2px; }
 
-        .led-container { display: flex; align-items: center; justify-content: space-between; }
-        .led-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #2d5a27; background: #132a13; transition: all 0.3s ease; }
+        .led-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .led-circle { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #2d5a27; background: #132a13; transition: all 0.3s ease; }
         .led-on { background: #70e000; border-color: #aacc00; box-shadow: 0 0 14px rgba(112, 224, 0, 0.9); }
 
         .switch-box { display: flex; align-items: center; justify-content: space-between; }
-        .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
+        .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2d5a27; transition: .3s; border-radius: 26px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: #d8f3dc; transition: .3s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2d5a27; transition: .3s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #d8f3dc; transition: .3s; border-radius: 50%; }
         input:checked + .slider { background-color: #38b000; }
         input:checked + .slider:before { transform: translateX(22px); background-color: #ffffff; }
         input:disabled + .slider { background-color: #1c3b1c; opacity: 0.5; cursor: not-allowed; }
 
-        .mode-text { font-size: 14px; font-weight: 800; color: #b7e4c7; }
+        .mode-text { font-size: 13px; font-weight: 800; color: #b7e4c7; }
 
-        /* Area 2 Grafik Diperlebar */
-        .charts-wrapper { max-width: 1400px; margin: 0 auto 20px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(550px, 1fr)); gap: 15px; }
-        .chart-card { background: rgba(24, 51, 24, 0.85); border-radius: 12px; padding: 20px; border: 1px solid rgba(149, 213, 178, 0.2); box-shadow: 0 6px 16px rgba(0,0,0,0.2); backdrop-filter: blur(6px); }
-
-        /* TABEL LOG DOCK */
+        /* WIDGET TABEL */
         .table-card { 
-            max-width: 1400px; 
-            margin: 0 auto 20px auto; 
             background: rgba(24, 51, 24, 0.85); 
             border-radius: 12px; 
             padding: 20px; 
@@ -131,7 +140,7 @@
             background: #38b000;
             color: #0b1d0b;
             border: none;
-            padding: 8px 14px;
+            padding: 8px 16px;
             border-radius: 6px;
             font-size: 12px;
             font-weight: 800;
@@ -141,10 +150,8 @@
             align-items: center;
             gap: 6px;
         }
-        .btn-check-now:hover {
-            background: #70e000;
-            transform: scale(1.03);
-        }
+        .btn-check-now:hover { background: #70e000; transform: scale(1.02); }
+
         .log-table { 
             width: 100%; 
             border-collapse: collapse; 
@@ -165,17 +172,20 @@
         }
         .log-table tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
 
-        .footer-action { max-width: 1400px; margin: 0 auto; text-align: center; }
-        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #38b000; color: #0b1d0b; padding: 12px 22px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 800; transition: all 0.2s; box-shadow: 0 4px 15px rgba(56, 176, 0, 0.3); }
+        /* FOOTER ACTIONS */
+        .footer-action { text-align: center; margin-top: 5px; }
+        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #38b000; color: #0b1d0b; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 800; transition: all 0.2s; box-shadow: 0 4px 15px rgba(56, 176, 0, 0.3); }
         .btn-gsheet:hover { background: #70e000; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(112, 224, 0, 0.4); }
 
-        @media (max-width: 900px) {
-            .charts-wrapper { grid-template-columns: 1fr; }
+        @media (max-width: 1024px) {
+            .grid-3-col { grid-template-columns: 1fr; }
+            .grid-2-col { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+    <!-- HEADER DASHBOARD -->
     <div class="header">
         <div>
             <h1>🌲 SMART GREEN HOUSE</h1>
@@ -193,143 +203,150 @@
         ⚠️ PERINGATAN: <span id="alert-msg">-</span>
     </div>
 
-    <!-- GRID CARDS & SENSOR -->
-    <div class="dashboard-grid">
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">🌱 KELEMBABAN TANAH</span>
-                <span id="badge-tanah" class="cond-badge cond-good">OPTIMAL</span>
+    <div class="dashboard-container">
+        
+        <!-- BARIS 1: MONITORING DATA SENSOR (3 KOLOM SIMETRIS) -->
+        <div class="grid-3-col">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🌱 KELEMBABAN TANAH</span>
+                    <span id="badge-tanah" class="cond-badge cond-good">OPTIMAL</span>
+                </div>
+                <div class="sensor-value"><span id="val-tanah">0</span><span class="sensor-unit">%</span></div>
             </div>
-            <div class="sensor-value"><span id="val-tanah">0</span><span class="sensor-unit">%</span></div>
-        </div>
 
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">🌡️ SUHU UDARA</span>
-                <span id="badge-suhu" class="cond-badge cond-good">IDEAL</span>
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🌡️ SUHU UDARA</span>
+                    <span id="badge-suhu" class="cond-badge cond-good">IDEAL</span>
+                </div>
+                <div class="sensor-value"><span id="val-suhu">0.0</span><span class="sensor-unit">°C</span></div>
             </div>
-            <div class="sensor-value"><span id="val-suhu">0.0</span><span class="sensor-unit">°C</span></div>
-        </div>
 
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">💧 KELEMBAPAN UDARA</span>
-                <span id="badge-kelembapan" class="cond-badge cond-good">NORMAL</span>
-            </div>
-            <div class="sensor-value"><span id="val-kelembapan">0.0</span><span class="sensor-unit">%</span></div>
-        </div>
-
-        <!-- POMPA AIR -->
-        <div class="card">
-            <div class="card-title" style="margin-bottom: 12px;">🚰 AIR (POMPA 1)</div>
-            <div class="led-container">
-                <span style="font-size: 13px; color: #95d5b2; font-weight: 600;">Status Relay</span>
-                <div id="led-air" class="led-circle"></div>
-            </div>
-            <hr style="border: none; border-top: 1px solid rgba(149, 213, 178, 0.2); margin: 12px 0;">
-            <div class="switch-box" style="margin-bottom: 10px;">
-                <span style="font-size: 13px; font-weight: 600;">Mode: <b id="txt-mode-air" class="mode-text">AUTO</b></span>
-                <label class="switch">
-                    <input type="checkbox" id="sw-mode-air" onchange="toggleModeAir(this)">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="switch-box">
-                <span style="font-size: 13px; color: #b7e4c7; font-weight: 600;">Saklar Manual</span>
-                <label class="switch">
-                    <input type="checkbox" id="sw-air" onchange="toggleAir(this)" disabled>
-                    <span class="slider"></span>
-                </label>
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">💧 KELEMBAPAN UDARA</span>
+                    <span id="badge-kelembapan" class="cond-badge cond-good">NORMAL</span>
+                </div>
+                <div class="sensor-value"><span id="val-kelembapan">0.0</span><span class="sensor-unit">%</span></div>
             </div>
         </div>
 
-        <!-- KIPAS -->
-        <div class="card">
-            <div class="card-title" style="margin-bottom: 12px;">🌀 KIPAS PENDINGIN</div>
-            <div class="led-container">
-                <span style="font-size: 13px; color: #95d5b2; font-weight: 600;">Status Relay</span>
-                <div id="led-kipas" class="led-circle"></div>
+        <!-- BARIS 2: KONTROL PERANGKAT / AKTUATOR (3 KOLOM SIMETRIS TERPISAH) -->
+        <div class="grid-3-col">
+            <!-- POMPA AIR -->
+            <div class="card">
+                <div class="card-title" style="margin-bottom: 12px;">🚰 AIR (POMPA 1)</div>
+                <div class="led-container">
+                    <span style="font-size: 13px; color: #95d5b2; font-weight: 600;">Status Relay</span>
+                    <div id="led-air" class="led-circle"></div>
+                </div>
+                <hr style="border: none; border-top: 1px solid rgba(149, 213, 178, 0.2); margin: 10px 0;">
+                <div class="switch-box" style="margin-bottom: 8px;">
+                    <span style="font-size: 12px; font-weight: 600;">Mode: <b id="txt-mode-air" class="mode-text">AUTO</b></span>
+                    <label class="switch">
+                        <input type="checkbox" id="sw-mode-air" onchange="toggleModeAir(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="switch-box">
+                    <span style="font-size: 12px; color: #b7e4c7; font-weight: 600;">Saklar Manual</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sw-air" onchange="toggleAir(this)" disabled>
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
-            <hr style="border: none; border-top: 1px solid rgba(149, 213, 178, 0.2); margin: 12px 0;">
-            <div class="switch-box" style="margin-bottom: 10px;">
-                <span style="font-size: 13px; font-weight: 600;">Mode: <b id="txt-mode-kipas" class="mode-text">AUTO</b></span>
-                <label class="switch">
-                    <input type="checkbox" id="sw-mode-kipas" onchange="toggleModeKipas(this)">
-                    <span class="slider"></span>
-                </label>
+
+            <!-- KIPAS -->
+            <div class="card">
+                <div class="card-title" style="margin-bottom: 12px;">🌀 KIPAS PENDINGIN</div>
+                <div class="led-container">
+                    <span style="font-size: 13px; color: #95d5b2; font-weight: 600;">Status Relay</span>
+                    <div id="led-kipas" class="led-circle"></div>
+                </div>
+                <hr style="border: none; border-top: 1px solid rgba(149, 213, 178, 0.2); margin: 10px 0;">
+                <div class="switch-box" style="margin-bottom: 8px;">
+                    <span style="font-size: 12px; font-weight: 600;">Mode: <b id="txt-mode-kipas" class="mode-text">AUTO</b></span>
+                    <label class="switch">
+                        <input type="checkbox" id="sw-mode-kipas" onchange="toggleModeKipas(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="switch-box">
+                    <span style="font-size: 12px; color: #b7e4c7; font-weight: 600;">Saklar Manual</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sw-kipas" onchange="toggleKipas(this)" disabled>
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
-            <div class="switch-box">
-                <span style="font-size: 13px; color: #b7e4c7; font-weight: 600;">Saklar Manual</span>
-                <label class="switch">
-                    <input type="checkbox" id="sw-kipas" onchange="toggleKipas(this)" disabled>
-                    <span class="slider"></span>
-                </label>
+
+            <!-- POMPA PUPUK -->
+            <div class="card">
+                <div class="card-title" style="margin-bottom: 12px;">🧪 POMPA PUPUK (POMPA 2)</div>
+                <div class="led-container">
+                    <span style="font-size: 13px; color: #95d5b2; font-weight: 600;">Status Relay</span>
+                    <div id="led-pupuk" class="led-circle"></div>
+                </div>
+                <hr style="border: none; border-top: 1px solid rgba(149, 213, 178, 0.2); margin: 10px 0;">
+                <div class="switch-box" style="margin-top: 15px;">
+                    <span style="font-size: 12px; color: #b7e4c7; font-weight: 600;">Siram Pupuk (3 Detik)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sw-pupuk" onchange="togglePupuk(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
         </div>
 
-        <!-- POMPA PUPUK -->
-        <div class="card">
-            <div class="card-title" style="margin-bottom: 12px;">🧪 POMPA PUPUK (POMPA 2)</div>
-            <div class="led-container">
-                <span style="font-size: 13px; color: #95d5b2; font-weight: 600;">Status Relay</span>
-                <div id="led-pupuk" class="led-circle"></div>
+        <!-- BARIS 3: GRAFIK MONITORING (2 KOLOM SIMETRIS 50% - 50%) -->
+        <div class="grid-2-col">
+            <div class="card">
+                <div class="card-title" style="margin-bottom: 15px;">💧 GRAFIK KELEMBAPAN (UPDATE TIAP 1 MENIT)</div>
+                <canvas id="kelembapanChart" height="140"></canvas>
             </div>
-            <hr style="border: none; border-top: 1px solid rgba(149, 213, 178, 0.2); margin: 12px 0;">
-            <div class="switch-box">
-                <span style="font-size: 13px; color: #b7e4c7; font-weight: 600;">Siram Pupuk (3 Detik)</span>
-                <label class="switch">
-                    <input type="checkbox" id="sw-pupuk" onchange="togglePupuk(this)">
-                    <span class="slider"></span>
-                </label>
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom: 15px;">🌡️ GRAFIK SUHU UDARA (UPDATE TIAP 1 MENIT)</div>
+                <canvas id="suhuChart" height="140"></canvas>
             </div>
         </div>
-    </div>
 
-    <!-- AREA 2 GRAFIK SEJAJAR -->
-    <div class="charts-wrapper">
-        <div class="chart-card">
-            <div class="card-title">💧 GRAFIK KELEMBAPAN (UPDATE TIAP 1 MENIT)</div>
-            <canvas id="kelembapanChart" height="130"></canvas>
+        <!-- BARIS 4: TABEL REKAP LOG DATA -->
+        <div class="table-card">
+            <div class="table-header-box">
+                <div class="card-title" style="margin: 0;">📋 REKAP LOG DATA SENSOR (MAX 15 DATA)</div>
+                <button class="btn-check-now" onclick="tambahBarisTabel()">
+                    🔄 Cek Kondisi Sekarang (Catat ke Tabel)
+                </button>
+            </div>
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Soil Moisture</th>
+                        <th>Kelembaban Tanah %</th>
+                        <th>Suhu Ruang (°C)</th>
+                        <th>Kelembaban Udara %</th>
+                        <th>Kipas</th>
+                        <th>Pompa Air</th>
+                        <th>Pompa Pupuk</th>
+                    </tr>
+                </thead>
+                <tbody id="table-log-body">
+                    <!-- Baris data otomatis dimasukkan ke sini -->
+                </tbody>
+            </table>
         </div>
 
-        <div class="chart-card">
-            <div class="card-title">🌡️ GRAFIK SUHU UDARA (UPDATE TIAP 1 MENIT)</div>
-            <canvas id="suhuChart" height="130"></canvas>
+        <!-- BUTTON FOOTER -->
+        <div class="footer-action">
+            <a href="https://docs.google.com/spreadsheets/d/1PaEPqRw8-1bVPoAI8SIOYLnv1JS_UqGMNuarSNDeVdI/edit?usp=sharing" target="_blank" class="btn-gsheet">
+                📊 Buka Google Sheets Lengkap
+            </a>
         </div>
-    </div>
 
-    <!-- TABEL LOG DATA ALA GOOGLE SHEETS -->
-    <div class="table-card">
-        <div class="table-header-box">
-            <div class="card-title" style="margin: 0;">📋 REKAP LOG DATA SENSOR (MAX 15 DATA)</div>
-            <button class="btn-check-now" onclick="tambahBarisTabel()">
-                🔄 Cek Kondisi Sekarang (Catat ke Tabel)
-            </button>
-        </div>
-        <table class="log-table">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Soil Moisture</th>
-                    <th>Kelembaban Tanah %</th>
-                    <th>Suhu Ruang (°C)</th>
-                    <th>Kelembaban Udara %</th>
-                    <th>Kipas</th>
-                    <th>Pompa Air</th>
-                    <th>Pompa Pupuk</th>
-                </tr>
-            </thead>
-            <tbody id="table-log-body">
-                <!-- Baris data ditambahkan di sini -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- TOMBOL BUKA LOG DATA GOOGLE SHEETS -->
-    <div class="footer-action">
-        <a href="https://docs.google.com/spreadsheets/d/1PaEPqRw8-1bVPoAI8SIOYLnv1JS_UqGMNuarSNDeVdI/edit?usp=sharing" target="_blank" class="btn-gsheet">
-            📊 Buka Google Sheets Lengkap
-        </a>
     </div>
 
     <script>
@@ -340,7 +357,6 @@
 
         const client = new Paho.MQTT.Client(host, port, path, clientId);
 
-        // --- FUNGSI TOGGLE FULLSCREEN LAYAR ---
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
