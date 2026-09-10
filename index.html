@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Greenhouse Dashboard</title>
+    <!-- Library MQTT via WebSocket -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        h1 { text-align: center; color: #2c3e50; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        .card h3 { margin: 0 0 10px 0; color: #7f8c8d; font-size: 0.9em; text-transform: uppercase; }
+        .value { font-size: 1.8em; font-weight: bold; color: #2c3e50; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-on { background-color: #2ecc71; color: white; }
+        .btn-off { background-color: #e74c3c; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Smart Greenhouse Dashboard</h1>
+        
+        <div class="card-grid">
+            <div class="card">
+                <h3>Suhu Udara</h3>
+                <div class="value" id="val-suhu">-- °C</div>
+            </div>
+            <div class="card">
+                <h3>Kelembapan Udara</h3>
+                <div class="value" id="val-kelembapan">-- %</div>
+            </div>
+            <div class="card">
+                <h3>Kelembapan Tanah</h3>
+                <div class="value" id="val-tanah">-- %</div>
+            </div>
+        </div>
+
+        <h2 style="margin-top: 30px; color: #2c3e50;">⚙️ Kontrol Perangkat</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3>Pompa 1 (Air)</h3>
+                <div class="value" id="status-p1">OFF</div>
+            </div>
+            <div class="card">
+                <h3>Kipas Pendingin</h3>
+                <div class="value" id="status-kipas">OFF</div>
+            </div>
+            <div class="card">
+                <h3>Pompa 2 (Pupuk 3 Detik)</h3>
+                <button class="btn btn-on" onclick="triggerPompa2()">Beri Pupuk</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi Koneksi MQTT via WebSocket ke HiveMQ Public Broker
+        const client = new Paho.MQTT.Client("broker.hivemq.com", Number(8000), "clientId-" + Math.random().toString(16).substr(2, 8));
+
+        client.onConnectionLost = onConnectionLost;
+        client.onMessageArrived = onMessageArrived;
+
+        client.connect({ onSuccess: onConnect });
+
+        function onConnect() {
+            console.log("Terhubung ke MQTT Broker");
+            client.subscribe("smartfarm/data/#");
+            client.subscribe("smartfarm/status/#");
+        }
+
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("Koneksi terputus: " + responseObject.errorMessage);
+                setTimeout(() => client.connect({ onSuccess: onConnect }), 5000);
+            }
+        }
+
+        function onMessageArrived(message) {
+            const topic = message.destinationName;
+            const payload = message.payloadString;
+
+            if (topic === "smartfarm/data/suhu") document.getElementById("val-suhu").innerText = payload + " °C";
+            if (topic === "smartfarm/data/kelembapan") document.getElementById("val-kelembapan").innerText = payload + " %";
+            if (topic === "smartfarm/data/tanah") document.getElementById("val-tanah").innerText = payload + " %";
+            if (topic === "smartfarm/status/pompa1") document.getElementById("status-p1").innerText = payload;
+            if (topic === "smartfarm/status/kipas") document.getElementById("status-kipas").innerText = payload;
+        }
+
+        function triggerPompa2() {
+            const message = new Paho.MQTT.Message("1");
+            message.destinationName = "smartfarm/cmd/pompa2";
+            client.send(message);
+        }
+    </script>
+</body>
+</html>
