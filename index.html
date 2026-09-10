@@ -7,16 +7,59 @@
     <!-- Library MQTT via WebSocket -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: auto; }
-        h1 { text-align: center; color: #2c3e50; }
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
-        .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
-        .card h3 { margin: 0 0 10px 0; color: #7f8c8d; font-size: 0.9em; text-transform: uppercase; }
-        .value { font-size: 1.8em; font-weight: bold; color: #2c3e50; }
-        .btn { padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-on { background-color: #2ecc71; color: white; }
-        .btn-off { background-color: #e74c3c; color: white; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7f6; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: auto; 
+        }
+        h1 { 
+            text-align: center; 
+            color: #2c3e50; 
+        }
+        .card-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 15px; 
+            margin-top: 20px; 
+        }
+        .card { 
+            background: white; 
+            border-radius: 10px; 
+            padding: 20px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            text-align: center; 
+        }
+        .card h3 { 
+            margin: 0 0 10px 0; 
+            color: #7f8c8d; 
+            font-size: 0.9em; 
+            text-transform: uppercase; 
+        }
+        .value { 
+            font-size: 1.8em; 
+            font-weight: bold; 
+            color: #2c3e50; 
+        }
+        .btn { 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 10px; 
+        }
+        .btn-on { 
+            background-color: #2ecc71; 
+            color: white; 
+        }
+        .btn-on:hover {
+            background-color: #27ae60;
+        }
     </style>
 </head>
 <body>
@@ -56,13 +99,24 @@
     </div>
 
     <script>
-        // Konfigurasi Koneksi MQTT via WebSocket ke HiveMQ Public Broker
-        const client = new Paho.MQTT.Client("broker.hivemq.com", Number(8000), "clientId-" + Math.random().toString(16).substr(2, 8));
+        // Konfigurasi WebSocket SSL (Port 8884) untuk HTTPS GitHub Pages
+        const client = new Paho.MQTT.Client(
+            "broker.hivemq.com", 
+            Number(8884), 
+            "clientId-" + Math.random().toString(16).substr(2, 8)
+        );
 
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
 
-        client.connect({ onSuccess: onConnect });
+        // Hubungkan ke MQTT Broker dengan enkripsi SSL
+        client.connect({ 
+            onSuccess: onConnect,
+            useSSL: true,
+            onFailure: function(e) {
+                console.log("Koneksi gagal: ", e);
+            }
+        });
 
         function onConnect() {
             console.log("Terhubung ke MQTT Broker");
@@ -73,7 +127,7 @@
         function onConnectionLost(responseObject) {
             if (responseObject.errorCode !== 0) {
                 console.log("Koneksi terputus: " + responseObject.errorMessage);
-                setTimeout(() => client.connect({ onSuccess: onConnect }), 5000);
+                setTimeout(() => client.connect({ onSuccess: onConnect, useSSL: true }), 5000);
             }
         }
 
