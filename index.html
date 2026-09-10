@@ -60,11 +60,18 @@
         .btn-on:hover {
             background-color: #27ae60;
         }
+        .status-online {
+            text-align: center;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🌱 Smart Greenhouse Dashboard</h1>
+        <div id="status-koneksi" class="status-online">Connecting to MQTT...</div>
         
         <div class="card-grid">
             <div class="card">
@@ -99,35 +106,55 @@
     </div>
 
     <script>
-        // Konfigurasi WebSocket SSL (Port 8884) untuk HTTPS GitHub Pages
-        const client = new Paho.MQTT.Client(
-            "broker.hivemq.com", 
-            Number(8884), 
-            "clientId-" + Math.random().toString(16).substr(2, 8)
-        );
+        // Konfigurasi WebSocket SSL HiveMQ (Port 8884 & Path /mqtt)
+        const host = "broker.hivemq.com";
+        const port = 8884;
+        const path = "/mqtt";
+        const clientId = "web_greenhouse_" + Math.random().toString(16).substr(2, 8);
+
+        const client = new Paho.MQTT.Client(host, port, path, clientId);
 
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
 
-        // Hubungkan ke MQTT Broker dengan enkripsi SSL
         client.connect({ 
             onSuccess: onConnect,
             useSSL: true,
+            timeout: 5,
             onFailure: function(e) {
                 console.log("Koneksi gagal: ", e);
+                document.getElementById("status-koneksi").innerText = "🔴 Koneksi Gagal, Mencoba lagi...";
+                document.getElementById("status-koneksi").style.color = "#e74c3c";
+                setTimeout(hubungkan, 5000);
             }
         });
 
+        function hubungkan() {
+            client.connect({ 
+                onSuccess: onConnect,
+                useSSL: true,
+                timeout: 5,
+                onFailure: function(e) {
+                    setTimeout(hubungkan, 5000);
+                }
+            });
+        }
+
         function onConnect() {
-            console.log("Terhubung ke MQTT Broker");
-            client.subscribe("smartfarm/data/#");
-            client.subscribe("smartfarm/status/#");
+            console.log("Terhubung ke MQTT Broker!");
+            document.getElementById("status-koneksi").innerText = "🟢 Terhubung ke Server (Real-time)";
+            document.getElementById("status-koneksi").style.color = "#27ae60";
+            
+            // Subscribe ke seluruh topik smartfarm
+            client.subscribe("smartfarm/#");
         }
 
         function onConnectionLost(responseObject) {
             if (responseObject.errorCode !== 0) {
                 console.log("Koneksi terputus: " + responseObject.errorMessage);
-                setTimeout(() => client.connect({ onSuccess: onConnect, useSSL: true }), 5000);
+                document.getElementById("status-koneksi").innerText = "🟡 Terputus, Menghubungkan ulang...";
+                document.getElementById("status-koneksi").style.color = "#f39c12";
+                setTimeout(hubungkan, 3000);
             }
         }
 
@@ -135,17 +162,28 @@
             const topic = message.destinationName;
             const payload = message.payloadString;
 
-            if (topic === "smartfarm/data/suhu") document.getElementById("val-suhu").innerText = payload + " °C";
-            if (topic === "smartfarm/data/kelembapan") document.getElementById("val-kelembapan").innerText = payload + " %";
-            if (topic === "smartfarm/data/tanah") document.getElementById("val-tanah").innerText = payload + " %";
-            if (topic === "smartfarm/status/pompa1") document.getElementById("status-p1").innerText = payload;
-            if (topic === "smartfarm/status/kipas") document.getElementById("status-kipas").innerText = payload;
+            if (topic === "smartfarm/data/suhu") {
+                document.getElementById("val-suhu").innerText = payload + " °C";
+            }
+            if (topic === "smartfarm/data/kelembapan") {
+                document.getElementById("val-kelembapan").innerText = payload + " %";
+            }
+            if (topic === "smartfarm/data/tanah") {
+                document.getElementById("val-tanah").innerText = payload + " %";
+            }
+            if (topic === "smartfarm/status/pompa1") {
+                document.getElementById("status-p1").innerText = payload;
+            }
+            if (topic === "smartfarm/status/kipas") {
+                document.getElementById("status-kipas").innerText = payload;
+            }
         }
 
         function triggerPompa2() {
             const message = new Paho.MQTT.Message("1");
             message.destinationName = "smartfarm/cmd/pompa2";
             client.send(message);
+            alert("Perintah Siram Pupuk Dikirim!");
         }
     </script>
 </body>
