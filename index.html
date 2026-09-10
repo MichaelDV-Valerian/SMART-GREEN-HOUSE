@@ -50,7 +50,7 @@
             margin: 0 auto 20px auto;
         }
 
-        /* Kartu dengan Tema Hijau Gelap Elegan */
+        /* Kartu dengan Tema Hijau Gelap */
         .card { 
             background: rgba(24, 51, 24, 0.85); 
             border-radius: 12px; 
@@ -94,6 +94,64 @@
         /* Area 2 Grafik */
         .charts-wrapper { max-width: 950px; margin: 0 auto 20px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 15px; }
         .chart-card { background: rgba(24, 51, 24, 0.85); border-radius: 12px; padding: 20px; border: 1px solid rgba(149, 213, 178, 0.2); box-shadow: 0 6px 16px rgba(0,0,0,0.2); backdrop-filter: blur(6px); }
+
+        /* TABEL LOG DOCK ALA GOOGLE SHEETS */
+        .table-card { 
+            max-width: 950px; 
+            margin: 0 auto 20px auto; 
+            background: rgba(24, 51, 24, 0.85); 
+            border-radius: 12px; 
+            padding: 20px; 
+            border: 1px solid rgba(149, 213, 178, 0.2); 
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2); 
+            backdrop-filter: blur(6px); 
+            overflow-x: auto;
+        }
+        .table-header-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn-check-now {
+            background: #38b000;
+            color: #0b1d0b;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-check-now:hover {
+            background: #70e000;
+            transform: scale(1.03);
+        }
+        .log-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 13px; 
+            text-align: center;
+        }
+        .log-table th { 
+            background: #2d5a27; 
+            color: #70e000; 
+            padding: 10px 8px; 
+            border: 1px solid rgba(149, 213, 178, 0.2); 
+            font-weight: 700;
+        }
+        .log-table td { 
+            padding: 8px; 
+            border: 1px solid rgba(149, 213, 178, 0.15); 
+            color: #ecf3ec;
+        }
+        .log-table tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
 
         /* Tombol Link Google Sheets Footer */
         .footer-action { max-width: 950px; margin: 0 auto; text-align: center; }
@@ -228,10 +286,37 @@
         </div>
     </div>
 
+    <!-- TABEL LOG DATA ALA GOOGLE SHEETS -->
+    <div class="table-card">
+        <div class="table-header-box">
+            <div class="card-title" style="margin: 0;">📋 REKAP LOG DATA SENSOR (MAX 15 DATA)</div>
+            <button class="btn-check-now" onclick="tambahBarisTabel()">
+                🔄 Cek Kondisi Sekarang (Catat ke Tabel)
+            </button>
+        </div>
+        <table class="log-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Soil Moisture</th>
+                    <th>Kelembaban Tanah %</th>
+                    <th>Suhu Ruang (°C)</th>
+                    <th>Kelembaban Udara %</th>
+                    <th>Kipas</th>
+                    <th>Pompa Air</th>
+                    <th>Pompa Pupuk</th>
+                </tr>
+            </thead>
+            <tbody id="table-log-body">
+                <!-- Baris data ditambahkan di sini -->
+            </tbody>
+        </table>
+    </div>
+
     <!-- TOMBOL BUKA LOG DATA GOOGLE SHEETS -->
     <div class="footer-action">
         <a href="https://docs.google.com/spreadsheets/d/1PaEPqRw8-1bVPoAI8SIOYLnv1JS_UqGMNuarSNDeVdI/edit?usp=sharing" target="_blank" class="btn-gsheet">
-            📊 Buka Rekap Data Log (Google Sheets)
+            📊 Buka Google Sheets Lengkap
         </a>
     </div>
 
@@ -248,7 +333,6 @@
             document.getElementById("live-clock").innerText = skrg.toLocaleTimeString('id-ID') + " WIB";
         }, 1000);
 
-        // --- KONFIGURASI GRAFIK 1 (TEMA HIJAU HUTAN) ---
         Chart.defaults.color = '#b7e4c7';
         Chart.defaults.borderColor = 'rgba(149, 213, 178, 0.15)';
 
@@ -265,7 +349,6 @@
             options: { responsive: true, scales: { x: { title: { display: true, text: 'Waktu' } }, y: { beginAtZero: true, max: 100 } } }
         });
 
-        // --- KONFIGURASI GRAFIK 2 (TEMA SUHU) ---
         const ctxSuhu = document.getElementById('suhuChart').getContext('2d');
         const suhuChart = new Chart(ctxSuhu, {
             type: 'line',
@@ -277,7 +360,9 @@
         });
 
         let lastSuhu = null, lastKelembapan = null, lastTanah = null;
+        let statusKipasState = "OFF", statusPompa1State = "OFF", statusPompa2State = "OFF";
         let grafikSudahInisialisasi = false;
+        let tabelSudahInisialisasi = false;
 
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
@@ -329,6 +414,22 @@
                 else { bTanah.innerText = "OPTIMAL"; bTanah.className = "cond-badge cond-good"; }
             }
 
+            if (topic === "smartfarm/status/pompa1") {
+                statusPompa1State = payload;
+                document.getElementById("led-air").className = "led-circle " + (payload === "ON" ? "led-on" : "");
+                document.getElementById("sw-air").checked = (payload === "ON");
+            }
+            if (topic === "smartfarm/status/kipas") {
+                statusKipasState = payload;
+                document.getElementById("led-kipas").className = "led-circle " + (payload === "ON" ? "led-on" : "");
+                document.getElementById("sw-kipas").checked = (payload === "ON");
+            }
+            if (topic === "smartfarm/status/pompa2") {
+                statusPompa2State = payload;
+                document.getElementById("led-pupuk").className = "led-circle " + (payload === "ON" ? "led-on" : "");
+                if (payload === "OFF") document.getElementById("sw-pupuk").checked = false;
+            }
+
             cekAlert();
 
             if (!grafikSudahInisialisasi && lastSuhu !== null && lastKelembapan !== null && lastTanah !== null) {
@@ -336,17 +437,9 @@
                 grafikSudahInisialisasi = true;
             }
 
-            if (topic === "smartfarm/status/pompa1") {
-                document.getElementById("led-air").className = "led-circle " + (payload === "ON" ? "led-on" : "");
-                document.getElementById("sw-air").checked = (payload === "ON");
-            }
-            if (topic === "smartfarm/status/kipas") {
-                document.getElementById("led-kipas").className = "led-circle " + (payload === "ON" ? "led-on" : "");
-                document.getElementById("sw-kipas").checked = (payload === "ON");
-            }
-            if (topic === "smartfarm/status/pompa2") {
-                document.getElementById("led-pupuk").className = "led-circle " + (payload === "ON" ? "led-on" : "");
-                if (payload === "OFF") document.getElementById("sw-pupuk").checked = false;
+            if (!tabelSudahInisialisasi && lastSuhu !== null && lastKelembapan !== null && lastTanah !== null) {
+                tambahBarisTabel();
+                tabelSudahInisialisasi = true;
             }
         }
 
@@ -365,11 +458,53 @@
             }
         }
 
+        // --- TIMER UPDATE GRAFIK SETIAP 1 MENIT ---
         setInterval(function() {
-            if (grafikSudahInisialisasi) {
-                tambahDataGrafik();
-            }
+            if (grafikSudahInisialisasi) tambahDataGrafik();
         }, 60000);
+
+        // --- TIMER UPDATE TABEL LOG SETIAP 1 JAM (3600000 ms) ---
+        setInterval(function() {
+            if (tabelSudahInisialisasi) tambahBarisTabel();
+        }, 3600000);
+
+        function tambahBarisTabel() {
+            if (lastSuhu === null || lastKelembapan === null || lastTanah === null) {
+                alert("Data sensor belum lengkap dari ESP32, mohon tunggu sebentar...");
+                return;
+            }
+
+            const skrg = new Date();
+            const year = skrg.getFullYear();
+            const month = String(skrg.getMonth() + 1).padStart(2, '0');
+            const day = String(skrg.getDate()).padStart(2, '0');
+            const hours = String(skrg.getHours()).padStart(2, '0');
+            const minutes = String(skrg.getMinutes()).padStart(2, '0');
+            const seconds = String(skrg.getSeconds()).padStart(2, '0');
+            
+            const timestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            const soilMoisture = (lastTanah < 30) ? "Kering" : "Basah";
+
+            const tbody = document.getElementById("table-log-body");
+            const tr = document.createElement("tr");
+
+            tr.innerHTML = `
+                <td>${timestamp}</td>
+                <td>${soilMoisture}</td>
+                <td>${lastTanah}</td>
+                <td>${lastSuhu.toFixed(1)}</td>
+                <td>${lastKelembapan.toFixed(1)}</td>
+                <td>${statusKipasState}</td>
+                <td>${statusPompa1State}</td>
+                <td>${statusPompa2State}</td>
+            `;
+
+            tbody.appendChild(tr);
+
+            if (tbody.children.length > 15) {
+                tbody.removeChild(tbody.children[0]);
+            }
+        }
 
         function tambahDataGrafik() {
             if (lastSuhu === null || lastKelembapan === null || lastTanah === null) return;
