@@ -3,114 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Greenhouse Dashboard</title>
-    <!-- Library MQTT via WebSocket -->
+    <title>SMART GREEN HOUSE</title>
+    <!-- MQTT Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f4f7f6; 
-            margin: 0; 
-            padding: 20px; 
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #f7f9fa; margin: 0; padding: 20px; color: #333; }
+        
+        .header { display: flex; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto 20px auto; }
+        .header h1 { font-size: 22px; font-weight: 800; margin: 0; }
+        .status-badge { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 12px; background: #e0e0e0; color: #666; }
+        .online { background: #e6f4ea; color: #137333; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 15px;
+            max-width: 900px;
+            margin: 0 auto;
         }
-        .container { 
-            max-width: 800px; 
-            margin: auto; 
-        }
-        h1 { 
-            text-align: center; 
-            color: #2c3e50; 
-        }
-        .card-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-            gap: 15px; 
-            margin-top: 20px; 
-        }
-        .card { 
-            background: white; 
-            border-radius: 10px; 
-            padding: 20px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            text-align: center; 
-        }
-        .card h3 { 
-            margin: 0 0 10px 0; 
-            color: #7f8c8d; 
-            font-size: 0.9em; 
-            text-transform: uppercase; 
-        }
-        .value { 
-            font-size: 1.8em; 
-            font-weight: bold; 
-            color: #2c3e50; 
-        }
-        .btn { 
-            padding: 10px 20px; 
-            border: none; 
-            border-radius: 5px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-top: 10px; 
-        }
-        .btn-on { 
-            background-color: #2ecc71; 
-            color: white; 
-        }
-        .btn-on:hover {
-            background-color: #27ae60;
-        }
-        .status-online {
-            text-align: center;
-            font-weight: bold;
-            color: #27ae60;
-            margin-bottom: 10px;
-        }
+
+        .card { background: white; border-radius: 8px; padding: 18px; border: 1px solid #eaedf0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+        .card-title { font-size: 11px; font-weight: 700; color: #70757a; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
+
+        /* Tampilan Nilai Sensor */
+        .sensor-value { font-size: 32px; font-weight: bold; color: #202124; }
+        .sensor-unit { font-size: 18px; color: #5f6368; margin-left: 2px; }
+
+        /* LED Indikator Bulat */
+        .led-container { display: flex; align-items: center; justify-content: space-between; }
+        .led-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #dadce0; background: #fff; transition: all 0.3s ease; }
+        .led-on { background: #34a853; border-color: #34a853; box-shadow: 0 0 8px rgba(52, 168, 83, 0.6); }
+
+        /* Switch Toggle Blynk */
+        .switch-box { display: flex; align-items: center; justify-content: space-between; }
+        .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 26px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #34a853; }
+        input:checked + .slider:before { transform: translateX(22px); }
+        input:disabled + .slider { background-color: #f1f3f4; cursor: not-allowed; }
+
+        .mode-text { font-size: 14px; font-weight: bold; color: #202124; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🌱 Smart Greenhouse Dashboard</h1>
-        <div id="status-koneksi" class="status-online">Connecting to MQTT...</div>
+
+    <div class="header">
+        <h1>SMART GREEN HOUSE</h1>
+        <div id="status-badge" class="status-badge">Offline</div>
+    </div>
+
+    <div class="dashboard-grid">
         
-        <div class="card-grid">
-            <div class="card">
-                <h3>Suhu Udara</h3>
-                <div class="value" id="val-suhu">-- °C</div>
+        <!-- SENSOR DATA -->
+        <div class="card">
+            <div class="card-title">KELEMBABAN TANAH</div>
+            <div class="sensor-value"><span id="val-tanah">0</span><span class="sensor-unit">%</span></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">SUHU UDARA</div>
+            <div class="sensor-value"><span id="val-suhu">0.0</span><span class="sensor-unit">°C</span></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">KELEMBAPAN UDARA</div>
+            <div class="sensor-value"><span id="val-kelembapan">0.0</span><span class="sensor-unit">%</span></div>
+        </div>
+
+        <!-- POMPA AIR (POMPA 1) -->
+        <div class="card">
+            <div class="card-title">AIR (POMPA 1)</div>
+            <div class="led-container">
+                <span style="font-size: 13px; color: #5f6368;">Status Relay</span>
+                <div id="led-air" class="led-circle"></div>
             </div>
-            <div class="card">
-                <h3>Kelembapan Udara</h3>
-                <div class="value" id="val-kelembapan">-- %</div>
+            <hr style="border: none; border-top: 1px solid #f1f3f4; margin: 12px 0;">
+            <div class="switch-box" style="margin-bottom: 10px;">
+                <span style="font-size: 13px;">Mode: <b id="txt-mode-air" class="mode-text">AUTO</b></span>
+                <label class="switch">
+                    <input type="checkbox" id="sw-mode-air" onchange="toggleModeAir(this)">
+                    <span class="slider"></span>
+                </label>
             </div>
-            <div class="card">
-                <h3>Kelembapan Tanah</h3>
-                <div class="value" id="val-tanah">-- %</div>
+            <div class="switch-box">
+                <span style="font-size: 13px;">Saklar Manual</span>
+                <label class="switch">
+                    <input type="checkbox" id="sw-air" onchange="toggleAir(this)" disabled>
+                    <span class="slider"></span>
+                </label>
             </div>
         </div>
 
-        <h2 style="margin-top: 30px; color: #2c3e50;">⚙️ Kontrol Perangkat</h2>
-        <div class="card-grid">
-            <div class="card">
-                <h3>Pompa 1 (Air)</h3>
-                <div class="value" id="status-p1">OFF</div>
+        <!-- KIPAS -->
+        <div class="card">
+            <div class="card-title">KIPAS PENDINGIN</div>
+            <div class="led-container">
+                <span style="font-size: 13px; color: #5f6368;">Status Relay</span>
+                <div id="led-kipas" class="led-circle"></div>
             </div>
-            <div class="card">
-                <h3>Kipas Pendingin</h3>
-                <div class="value" id="status-kipas">OFF</div>
+            <hr style="border: none; border-top: 1px solid #f1f3f4; margin: 12px 0;">
+            <div class="switch-box" style="margin-bottom: 10px;">
+                <span style="font-size: 13px;">Mode: <b id="txt-mode-kipas" class="mode-text">AUTO</b></span>
+                <label class="switch">
+                    <input type="checkbox" id="sw-mode-kipas" onchange="toggleModeKipas(this)">
+                    <span class="slider"></span>
+                </label>
             </div>
-            <div class="card">
-                <h3>Pompa 2 (Pupuk 3 Detik)</h3>
-                <button class="btn btn-on" onclick="triggerPompa2()">Beri Pupuk</button>
+            <div class="switch-box">
+                <span style="font-size: 13px;">Saklar Manual</span>
+                <label class="switch">
+                    <input type="checkbox" id="sw-kipas" onchange="toggleKipas(this)" disabled>
+                    <span class="slider"></span>
+                </label>
             </div>
         </div>
+
+        <!-- POMPA PUPUK (POMPA 2) -->
+        <div class="card">
+            <div class="card-title">POMPA PUPUK (POMPA 2)</div>
+            <div class="led-container">
+                <span style="font-size: 13px; color: #5f6368;">Status Relay</span>
+                <div id="led-pupuk" class="led-circle"></div>
+            </div>
+            <hr style="border: none; border-top: 1px solid #f1f3f4; margin: 12px 0;">
+            <div class="switch-box">
+                <span style="font-size: 13px;">Siram Pupuk (3 Detik)</span>
+                <label class="switch">
+                    <input type="checkbox" id="sw-pupuk" onchange="togglePupuk(this)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // Konfigurasi WebSocket SSL HiveMQ (Port 8884 & Path /mqtt)
         const host = "broker.hivemq.com";
         const port = 8884;
         const path = "/mqtt";
-        const clientId = "web_greenhouse_" + Math.random().toString(16).substr(2, 8);
+        const clientId = "blynk_no_gauge_" + Math.random().toString(16).substr(2, 8);
 
         const client = new Paho.MQTT.Client(host, port, path, clientId);
 
@@ -121,41 +155,21 @@
             onSuccess: onConnect,
             useSSL: true,
             timeout: 5,
-            onFailure: function(e) {
-                console.log("Koneksi gagal: ", e);
-                document.getElementById("status-koneksi").innerText = "🔴 Koneksi Gagal, Mencoba lagi...";
-                document.getElementById("status-koneksi").style.color = "#e74c3c";
-                setTimeout(hubungkan, 5000);
-            }
+            onFailure: function() { setTimeout(hubungkan, 5000); }
         });
 
-        function hubungkan() {
-            client.connect({ 
-                onSuccess: onConnect,
-                useSSL: true,
-                timeout: 5,
-                onFailure: function(e) {
-                    setTimeout(hubungkan, 5000);
-                }
-            });
-        }
+        function hubungkan() { client.connect({ onSuccess: onConnect, useSSL: true }); }
 
         function onConnect() {
-            console.log("Terhubung ke MQTT Broker!");
-            document.getElementById("status-koneksi").innerText = "🟢 Terhubung ke Server (Real-time)";
-            document.getElementById("status-koneksi").style.color = "#27ae60";
-            
-            // Subscribe ke seluruh topik smartfarm
+            document.getElementById("status-badge").innerText = "Online";
+            document.getElementById("status-badge").classList.add("online");
             client.subscribe("smartfarm/#");
         }
 
-        function onConnectionLost(responseObject) {
-            if (responseObject.errorCode !== 0) {
-                console.log("Koneksi terputus: " + responseObject.errorMessage);
-                document.getElementById("status-koneksi").innerText = "🟡 Terputus, Menghubungkan ulang...";
-                document.getElementById("status-koneksi").style.color = "#f39c12";
-                setTimeout(hubungkan, 3000);
-            }
+        function onConnectionLost() {
+            document.getElementById("status-badge").innerText = "Offline";
+            document.getElementById("status-badge").classList.remove("online");
+            setTimeout(hubungkan, 3000);
         }
 
         function onMessageArrived(message) {
@@ -163,28 +177,53 @@
             const payload = message.payloadString;
 
             if (topic === "smartfarm/data/suhu") {
-                document.getElementById("val-suhu").innerText = payload + " °C";
+                document.getElementById("val-suhu").innerText = parseFloat(payload).toFixed(1);
             }
             if (topic === "smartfarm/data/kelembapan") {
-                document.getElementById("val-kelembapan").innerText = payload + " %";
+                document.getElementById("val-kelembapan").innerText = parseFloat(payload).toFixed(1);
             }
             if (topic === "smartfarm/data/tanah") {
-                document.getElementById("val-tanah").innerText = payload + " %";
+                document.getElementById("val-tanah").innerText = payload;
             }
+
+            // Status LED Bulat
             if (topic === "smartfarm/status/pompa1") {
-                document.getElementById("status-p1").innerText = payload;
+                document.getElementById("led-air").className = "led-circle " + (payload === "ON" ? "led-on" : "");
             }
             if (topic === "smartfarm/status/kipas") {
-                document.getElementById("status-kipas").innerText = payload;
+                document.getElementById("led-kipas").className = "led-circle " + (payload === "ON" ? "led-on" : "");
+            }
+            if (topic === "smartfarm/status/pompa2") {
+                document.getElementById("led-pupuk").className = "led-circle " + (payload === "ON" ? "led-on" : "");
+                if (payload === "OFF") document.getElementById("sw-pupuk").checked = false;
             }
         }
 
-        function triggerPompa2() {
-            const message = new Paho.MQTT.Message("1");
-            message.destinationName = "smartfarm/cmd/pompa2";
-            client.send(message);
-            alert("Perintah Siram Pupuk Dikirim!");
+        function publish(topic, val) {
+            const msg = new Paho.MQTT.Message(val);
+            msg.destinationName = topic;
+            client.send(msg);
         }
+
+        function togglePupuk(el) { publish("smartfarm/cmd/pompa2", el.checked ? "1" : "0"); }
+        
+        function toggleModeAir(el) {
+            const isManual = el.checked;
+            document.getElementById("txt-mode-air").innerText = isManual ? "MANUAL" : "AUTO";
+            document.getElementById("sw-air").disabled = !isManual;
+            publish("smartfarm/cmd/pompa1_mode", isManual ? "MANUAL" : "AUTO");
+        }
+
+        function toggleAir(el) { publish("smartfarm/cmd/pompa1_sw", el.checked ? "1" : "0"); }
+
+        function toggleModeKipas(el) {
+            const isManual = el.checked;
+            document.getElementById("txt-mode-kipas").innerText = isManual ? "MANUAL" : "AUTO";
+            document.getElementById("sw-kipas").disabled = !isManual;
+            publish("smartfarm/cmd/kipas_mode", isManual ? "MANUAL" : "AUTO");
+        }
+
+        function toggleKipas(el) { publish("smartfarm/cmd/kipas_sw", el.checked ? "1" : "0"); }
     </script>
 </body>
 </html>
