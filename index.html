@@ -15,17 +15,19 @@
             --text-main: #ecf3ec;
             --text-title: #b7e4c7;
             --text-sub: #95d5b2;
+            --text-bold: #ffffff;
             --border-color: rgba(149, 213, 178, 0.25);
             --chart-grid: rgba(149, 213, 178, 0.15);
         }
 
         .light-theme {
-            --header-bg: rgba(255, 255, 255, 0.92);
-            --card-bg: rgba(255, 255, 255, 0.94);
-            --text-main: #1b4332;
-            --text-title: #081c15;
-            --text-sub: #2d6a4f;
-            --border-color: rgba(45, 106, 79, 0.25);
+            --header-bg: rgba(240, 245, 240, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --text-main: #1b382b;
+            --text-title: #0a2318;
+            --text-sub: #1e5239;
+            --text-bold: #000000;
+            --border-color: rgba(45, 106, 79, 0.3);
             --chart-grid: rgba(45, 106, 79, 0.15);
         }
 
@@ -91,7 +93,7 @@
             border-radius: 12px;
             backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.37);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
         .header-top {
             display: flex;
@@ -102,13 +104,13 @@
         }
         .header h1 { font-size: 22px; font-weight: 800; margin: 0; color: var(--text-title); letter-spacing: 0.5px; }
         .header-info { text-align: right; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .weather-box { font-size: 12px; font-weight: 700; color: var(--text-sub); background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 8px; display: flex; align-items: center; gap: 6px; }
+        .weather-box { font-size: 12px; font-weight: 700; color: var(--text-sub); background: rgba(0,0,0,0.08); padding: 5px 10px; border-radius: 8px; display: flex; align-items: center; gap: 6px; }
         .live-clock { font-size: 13px; font-weight: 700; color: var(--text-sub); }
         .status-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #2d5a27; color: #d8f3dc; border: 1px solid #52b788; }
-        .online { background: #38b000; color: white; border-color: #70e000; box-shadow: 0 0 10px rgba(112, 224, 0, 0.5); }
+        .online { background: #2b9300; color: white; border-color: #38b000; box-shadow: 0 0 10px rgba(56, 176, 0, 0.4); }
 
         .btn-top {
-            background: rgba(149, 213, 178, 0.15);
+            background: rgba(149, 213, 178, 0.2);
             border: 1px solid var(--border-color);
             color: var(--text-title);
             padding: 6px 12px;
@@ -117,7 +119,7 @@
             font-weight: 700;
             cursor: pointer;
         }
-        .btn-top:hover { background: #38b000; color: #0b1d0b; }
+        .btn-top:hover { background: #38b000; color: #ffffff; }
 
         /* MENU NAVIGASI TAB */
         .nav-tabs {
@@ -128,7 +130,7 @@
             flex-wrap: wrap;
         }
         .nav-btn {
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.05);
             border: 1px solid var(--border-color);
             color: var(--text-sub);
             padding: 8px 16px;
@@ -142,10 +144,10 @@
             transition: all 0.2s;
         }
         .nav-btn:hover, .nav-btn.active {
-            background: #38b000;
-            color: #0b1d0b;
-            border-color: #70e000;
-            box-shadow: 0 0 12px rgba(56, 176, 0, 0.4);
+            background: #2b9300;
+            color: #ffffff;
+            border-color: #38b000;
+            box-shadow: 0 0 12px rgba(43, 147, 0, 0.3);
         }
 
         .alert-banner { max-width: 1400px; margin: 0 auto 20px auto; padding: 12px 15px; background: #d90429; color: #ffffff; font-size: 13px; font-weight: bold; border-radius: 8px; display: none; box-shadow: 0 4px 15px rgba(217, 4, 41, 0.3); }
@@ -162,7 +164,7 @@
             border-radius: 12px; 
             padding: 20px; 
             border: 1px solid var(--border-color); 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.37); 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2); 
             backdrop-filter: blur(12px);
             display: flex;
             flex-direction: column;
@@ -177,8 +179,8 @@
         .cond-danger { background: #5c1111; color: #ff6b6b; border: 1px solid #f44336; }
 
         .gauge-box { position: relative; width: 100%; max-width: 200px; margin: 0 auto; text-align: center; }
-        .gauge-value-overlay { position: absolute; bottom: 5px; left: 0; right: 0; font-size: 28px; font-weight: 800; color: var(--text-main); }
-        .gauge-unit { font-size: 18px; color: #70e000; }
+        .gauge-value-overlay { position: absolute; bottom: 5px; left: 0; right: 0; font-size: 28px; font-weight: 800; color: var(--text-title); }
+        .gauge-unit { font-size: 18px; color: var(--text-sub); }
 
         .led-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         .led-circle { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #2d5a27; background: #132a13; }
@@ -189,7 +191,7 @@
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2d5a27; transition: .3s; border-radius: 24px; }
         .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #d8f3dc; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: #38b000; }
+        input:checked + .slider { background-color: #2b9300; }
         input:checked + .slider:before { transform: translateX(22px); background-color: #ffffff; }
 
         .mode-text { font-size: 13px; font-weight: 800; color: var(--text-title); }
@@ -215,12 +217,12 @@
             border-radius: 5px;
             background: #2d5a27;
             outline: none;
-            accent-color: #70e000;
+            accent-color: #2b9300;
             cursor: pointer;
         }
 
-        /* STYLING JURNAL TANAMAN */
-        .plant-card {
+        /* STYLING JURNAL TANAMAN & HARDWARE */
+        .plant-card, .hw-card {
             background: var(--card-bg);
             border-radius: 12px;
             padding: 16px;
@@ -230,20 +232,21 @@
             flex-direction: column;
             justify-content: space-between;
             gap: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.37);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
-        .plant-img {
+        .plant-img, .hw-img {
             width: 100%;
             height: 140px;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 8px;
             border: 1px solid var(--border-color);
+            background: #ffffff;
         }
-        .plant-header { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
-        .plant-name { font-size: 15px; font-weight: 800; color: var(--text-title); }
-        .plant-tag { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 12px; background: #2d5a27; color: #70e000; border: 1px solid #52b788; }
-        .plant-param { font-size: 12px; color: var(--text-sub); line-height: 1.6; }
-        .plant-param b { color: #ffffff; }
+        .plant-header, .hw-title { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+        .plant-name, .hw-title span:first-child { font-size: 15px; font-weight: 800; color: var(--text-title); }
+        .plant-tag { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 12px; background: rgba(45, 106, 79, 0.2); color: var(--text-sub); border: 1px solid var(--border-color); }
+        .plant-param, .hw-desc { font-size: 12px; color: var(--text-main); line-height: 1.6; }
+        .plant-param b, .hw-desc b { color: var(--text-bold); }
         
         .plant-btn-group {
             display: flex;
@@ -252,8 +255,8 @@
             margin-top: 6px;
         }
         .btn-apply-preset {
-            background: #38b000;
-            color: #0b1d0b;
+            background: #2b9300;
+            color: #ffffff;
             border: none;
             padding: 8px;
             border-radius: 6px;
@@ -263,12 +266,12 @@
             text-align: center;
             transition: all 0.2s;
         }
-        .btn-apply-preset:hover { background: #70e000; }
+        .btn-apply-preset:hover { background: #38b000; }
 
         .btn-wiki {
-            background: rgba(76, 201, 240, 0.15);
-            color: #4cc9f0;
-            border: 1px solid rgba(76, 201, 240, 0.4);
+            background: rgba(0, 119, 182, 0.12);
+            color: #0077b6;
+            border: 1px solid rgba(0, 119, 182, 0.3);
             padding: 6px;
             border-radius: 6px;
             font-weight: 700;
@@ -282,56 +285,21 @@
             transition: all 0.2s;
         }
         .btn-wiki:hover {
-            background: #4cc9f0;
-            color: #0b1d0b;
+            background: #0077b6;
+            color: #ffffff;
         }
 
-        /* STYLING HARDWARE CARD */
-        .hw-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(12px);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.37);
-        }
-        .hw-img {
-            width: 100%;
-            height: 160px;
-            object-fit: contain;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: #ffffff;
-        }
-        .hw-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--text-title);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .hw-desc {
-            font-size: 12px;
-            color: var(--text-sub);
-            line-height: 1.6;
-        }
-        .hw-desc b { color: #ffffff; }
-
-        .table-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); backdrop-filter: blur(12px); overflow-x: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.37); }
+        .table-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); backdrop-filter: blur(12px); overflow-x: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
         .table-header-box { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        .btn-action { background: #38b000; color: #0b1d0b; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-action:hover { background: #70e000; }
+        .btn-action { background: #2b9300; color: #ffffff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-action:hover { background: #38b000; }
 
         .log-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
-        .log-table th { background: #2d5a27; color: #70e000; padding: 10px 8px; border: 1px solid var(--border-color); font-weight: 700; }
+        .log-table th { background: rgba(45, 106, 79, 0.25); color: var(--text-title); padding: 10px 8px; border: 1px solid var(--border-color); font-weight: 700; }
         .log-table td { padding: 8px; border: 1px solid var(--border-color); color: var(--text-main); }
 
         .footer-action { text-align: center; margin-top: 5px; }
-        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #38b000; color: #0b1d0b; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 800; box-shadow: 0 4px 15px rgba(56, 176, 0, 0.4); }
+        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #2b9300; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 800; box-shadow: 0 4px 15px rgba(43, 147, 0, 0.3); }
 
         @media (max-width: 1024px) { 
             .grid-3-col, .grid-2-col { grid-template-columns: 1fr; } 
@@ -518,7 +486,7 @@
                 <div class="card-title" style="margin: 0;">📋 REKAP LOG DATA SENSOR (MAX 15 DATA)</div>
                 <div style="display: flex; gap: 10px;">
                     <button class="btn-action" onclick="tambahBarisTabel()">🔄 Cek Kondisi Sekarang</button>
-                    <button class="btn-action" style="background: #4cc9f0;" onclick="exportTableToCSV('log_sensor.csv')">📥 Ekspor CSV</button>
+                    <button class="btn-action" style="background: #0077b6;" onclick="exportTableToCSV('log_sensor.csv')">📥 Ekspor CSV</button>
                 </div>
             </div>
             <table class="log-table" id="table-log">
@@ -799,7 +767,15 @@
             alert("✅ Parameter ideal untuk [" + namaTanaman + "] berhasil diterapkan ke sistem!\nBatas Kipas: " + suhuVal + "°C | Batas Siram: " + tanahVal + "%");
         }
 
-        function toggleTheme() { document.body.classList.toggle("light-theme"); }
+        function toggleTheme() { 
+            document.body.classList.toggle("light-theme"); 
+            const isLight = document.body.classList.contains("light-theme");
+            Chart.defaults.color = isLight ? '#1e5239' : '#b7e4c7';
+            Chart.defaults.borderColor = isLight ? 'rgba(45, 106, 79, 0.15)' : 'rgba(149, 213, 178, 0.15)';
+            kelembapanChart.update();
+            suhuChart.update();
+        }
+
         function toggleFullScreen() {
             if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } 
             else { if (document.exitFullscreen) document.exitFullscreen(); }
