@@ -118,9 +118,31 @@
 
         .mode-text { font-size: 13px; font-weight: 800; color: var(--text-title); }
 
-        .setpoint-box { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
-        .setpoint-input { width: 60px; padding: 4px; border-radius: 4px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); color: var(--text-main); font-weight: bold; text-align: center; }
-        .btn-setpoint { background: #38b000; border: none; padding: 5px 10px; border-radius: 4px; color: #0b1d0b; font-weight: bold; cursor: pointer; font-size: 11px; }
+        /* SLIDER SETPOINT STYLING */
+        .slider-box {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--text-sub);
+        }
+        .range-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: #2d5a27;
+            outline: none;
+            accent-color: #70e000;
+            cursor: pointer;
+        }
 
         .table-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); overflow-x: auto; }
         .table-header-box { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
@@ -146,7 +168,7 @@
             <div id="last-update" style="font-size: 11px; color: var(--text-sub); margin-top: 2px; font-weight: 600;">Last Update: -</div>
         </div>
         <div class="header-info">
-            <div class="weather-box" id="weather-box">🌤️ Sidoarjo: <span id="weather-temp">--°C</span></div>
+            <div class="weather-box" id="weather-box">🌤️ Cuaca: <span id="weather-temp">--°C</span></div>
             <div id="live-clock" class="live-clock">00:00:00 WIB</div>
             <div id="status-badge" class="status-badge">Offline</div>
             <button class="btn-top" onclick="toggleTheme()">🌓 Theme</button>
@@ -197,16 +219,16 @@
             </div>
         </div>
 
-        <!-- BARIS 2: KONTROL PERANGKAT & SETPOINT PARAMETER -->
+        <!-- BARIS 2: KONTROL PERANGKAT & SLIDER SETPOINT PARAMETER -->
         <div class="grid-3-col">
-            <!-- POMPA AIR -->
+            <!-- POMPA AIR + SLIDER TANAH -->
             <div class="card">
                 <div class="card-title" style="margin-bottom: 12px;">🚰 AIR (POMPA 1)</div>
                 <div class="led-container">
                     <span style="font-size: 13px; color: var(--text-sub); font-weight: 600;">Status Relay</span>
                     <div id="led-air" class="led-circle"></div>
                 </div>
-                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 8px 0;">
+                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 6px 0;">
                 <div class="switch-box" style="margin-bottom: 6px;">
                     <span style="font-size: 12px; font-weight: 600;">Mode: <b id="txt-mode-air" class="mode-text">AUTO</b></span>
                     <label class="switch">
@@ -221,16 +243,24 @@
                         <span class="slider"></span>
                     </label>
                 </div>
+                <!-- SLIDER BATAS SIRAM TANAH -->
+                <div class="slider-box">
+                    <div class="slider-header">
+                        <span>Batas Siram (Tanah <):</span>
+                        <b id="lbl-setpoint-tanah">30%</b>
+                    </div>
+                    <input type="range" min="10" max="60" value="30" class="range-slider" id="slider-tanah" onchange="kirimSetpointTanah(this.value)" oninput="document.getElementById('lbl-setpoint-tanah').innerText = this.value + '%'">
+                </div>
             </div>
 
-            <!-- KIPAS & SETPOINT SUHU -->
+            <!-- KIPAS + SLIDER SUHU -->
             <div class="card">
                 <div class="card-title" style="margin-bottom: 12px;">🌀 KIPAS PENDINGIN</div>
                 <div class="led-container">
                     <span style="font-size: 13px; color: var(--text-sub); font-weight: 600;">Status Relay</span>
                     <div id="led-kipas" class="led-circle"></div>
                 </div>
-                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 8px 0;">
+                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 6px 0;">
                 <div class="switch-box" style="margin-bottom: 6px;">
                     <span style="font-size: 12px; font-weight: 600;">Mode: <b id="txt-mode-kipas" class="mode-text">AUTO</b></span>
                     <label class="switch">
@@ -245,10 +275,13 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                <div class="setpoint-box">
-                    <span style="font-size: 11px; font-weight: bold;">Batas Kipas (°C):</span>
-                    <input type="number" id="input-setpoint-suhu" class="setpoint-input" value="30">
-                    <button class="btn-setpoint" onclick="kirimSetpointSuhu()">Kirim</button>
+                <!-- SLIDER BATAS SUHU KIPAS -->
+                <div class="slider-box">
+                    <div class="slider-header">
+                        <span>Batas Kipas (Suhu >=):</span>
+                        <b id="lbl-setpoint-suhu">30.0°C</b>
+                    </div>
+                    <input type="range" min="25" max="40" step="0.5" value="30" class="range-slider" id="slider-suhu" onchange="kirimSetpointSuhu(this.value)" oninput="document.getElementById('lbl-setpoint-suhu').innerText = parseFloat(this.value).toFixed(1) + '°C'">
                 </div>
             </div>
 
@@ -260,7 +293,7 @@
                     <div id="led-pupuk" class="led-circle"></div>
                 </div>
                 <hr style="border: none; border-top: 1px solid var(--border-color); margin: 8px 0;">
-                <div class="switch-box" style="margin-top: 15px;">
+                <div class="switch-box" style="margin-top: 25px;">
                     <span style="font-size: 12px; color: var(--text-sub); font-weight: 600;">Siram Pupuk (3 Detik)</span>
                     <label class="switch">
                         <input type="checkbox" id="sw-pupuk" onchange="togglePupuk(this)">
@@ -270,7 +303,7 @@
             </div>
         </div>
 
-        <!-- BARIS 3: GRAFIK MONITORING LEBAR -->
+        <!-- BARIS 3: GRAFIK MONITORING -->
         <div class="grid-2-col">
             <div class="card">
                 <div class="card-title" style="margin-bottom: 15px;">💧 GRAFIK KELEMBAPAN (UPDATE TIAP 1 MENIT)</div>
@@ -283,7 +316,7 @@
             </div>
         </div>
 
-        <!-- BARIS 4: TABEL REKAP LOG DATA & EKSPOR CSV -->
+        <!-- BARIS 4: TABEL REKAP LOG DATA -->
         <div class="table-card">
             <div class="table-header-box">
                 <div class="card-title" style="margin: 0;">📋 REKAP LOG DATA SENSOR (MAX 15 DATA)</div>
@@ -328,10 +361,7 @@
 
         const client = new Paho.MQTT.Client(host, port, path, clientId);
 
-        function toggleTheme() {
-            document.body.classList.toggle("light-theme");
-        }
-
+        function toggleTheme() { document.body.classList.toggle("light-theme"); }
         function toggleFullScreen() {
             if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } 
             else { if (document.exitFullscreen) document.exitFullscreen(); }
@@ -342,15 +372,26 @@
             document.getElementById("live-clock").innerText = skrg.toLocaleTimeString('id-ID') + " WIB";
         }, 1000);
 
-        // API CUCA LOKAL (SIDOARJO)
-        async function getWeatherData() {
+        // DETEKSI CUACA LOKAL OTOMATIS VIA GPS BROWSER
+        function getWeatherData() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    try {
+                        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                        const data = await res.json();
+                        document.getElementById('weather-temp').innerText = data.current_weather.temperature + "°C";
+                    } catch (e) { fetchWeatherDataDefault(-7.4478, 112.7183); }
+                }, () => { fetchWeatherDataDefault(-7.4478, 112.7183); });
+            } else { fetchWeatherDataDefault(-7.4478, 112.7183); }
+        }
+        async function fetchWeatherDataDefault(lat, lon) {
             try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.4478&longitude=112.7183&current_weather=true');
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
                 const data = await res.json();
                 document.getElementById('weather-temp').innerText = data.current_weather.temperature + "°C";
-            } catch (e) {
-                document.getElementById('weather-box').style.display = 'none';
-            }
+            } catch (e) {}
         }
         getWeatherData();
 
@@ -522,30 +563,26 @@
             if (tbody.children.length > 15) tbody.removeChild(tbody.children[0]);
         }
 
-       function exportTableToCSV(filename) {
-    let csv = [];
-    let rows = document.querySelectorAll("#table-log tr");
-    
-    for (let i = 0; i < rows.length; i++) {
-        let row = [], cols = rows[i].querySelectorAll("td, th");
-        for (let j = 0; j < cols.length; j++) {
-            // Bersihkan teks dari karakter aneh dan pemisah
-            let text = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").trim();
-            row.push(`"${text}"`);
+        // FUNGSI EKSPOR CSV RAPI DENGAN PEMISAH TITIK KOMA (;) & UTF-8 BOM
+        function exportTableToCSV(filename) {
+            let csv = [];
+            let rows = document.querySelectorAll("#table-log tr");
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                for (let j = 0; j < cols.length; j++) {
+                    let text = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").trim();
+                    row.push(`"${text}"`);
+                }
+                csv.push(row.join(";"));
+            }
+            let csvFile = new Blob(["\uFEFF" + csv.join("\n")], {type: "text/csv;charset=utf-8;"});
+            let downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
         }
-        // Menggunakan titik koma (;) agar Excel otomatis memisahkannya ke dalam kolom tersendiri
-        csv.push(row.join(";"));
-    }
-
-    // Menambahkan \uFEFF (UTF-8 BOM) agar simbol °C dibaca normal tanpa karakter Â
-    let csvFile = new Blob(["\uFEFF" + csv.join("\n")], {type: "text/csv;charset=utf-8;"});
-    let downloadLink = document.createElement("a");
-    downloadLink.download = filename;
-    downloadLink.href = window.URL.createObjectURL(csvFile);
-    downloadLink.style.display = "none";
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-}
 
         function tambahDataGrafik() {
             if (lastSuhu === null || lastKelembapan === null || lastTanah === null) return;
@@ -577,11 +614,9 @@
             client.send(msg);
         }
 
-        function kirimSetpointSuhu() {
-            const val = document.getElementById("input-setpoint-suhu").value;
-            publish("smartfarm/setpoint/suhu", val);
-            alert("Setpoint suhu kipas diubah ke " + val + "°C");
-        }
+        // FUNGSI MENGIRIM SETPOINT SLIDER KE MQTT
+        function kirimSetpointSuhu(val) { publish("smartfarm/setpoint/suhu", String(val)); }
+        function kirimSetpointTanah(val) { publish("smartfarm/setpoint/tanah", String(val)); }
 
         function togglePupuk(el) { publish("smartfarm/cmd/pompa2", el.checked ? "1" : "0"); }
         function toggleModeAir(el) {
