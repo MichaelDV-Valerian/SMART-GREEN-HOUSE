@@ -219,11 +219,11 @@
             cursor: pointer;
         }
 
-        /* STYLING JURNAL TANAMAN */
+        /* STYLING JURNAL TANAMAN DENGAN GAMBAR & WIKIPEDIA */
         .plant-card {
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 20px;
+            padding: 16px;
             border: 1px solid var(--border-color);
             backdrop-filter: blur(12px);
             display: flex;
@@ -232,11 +232,25 @@
             gap: 12px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.37);
         }
-        .plant-header { display: flex; align-items: center; justify-content: space-between; }
-        .plant-name { font-size: 16px; font-weight: 800; color: var(--text-title); }
-        .plant-tag { font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 12px; background: #2d5a27; color: #70e000; border: 1px solid #52b788; }
+        .plant-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .plant-header { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+        .plant-name { font-size: 15px; font-weight: 800; color: var(--text-title); }
+        .plant-tag { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 12px; background: #2d5a27; color: #70e000; border: 1px solid #52b788; }
         .plant-param { font-size: 12px; color: var(--text-sub); line-height: 1.6; }
         .plant-param b { color: #ffffff; }
+        
+        .plant-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 6px;
+        }
         .btn-apply-preset {
             background: #38b000;
             color: #0b1d0b;
@@ -250,6 +264,27 @@
             transition: all 0.2s;
         }
         .btn-apply-preset:hover { background: #70e000; }
+
+        .btn-wiki {
+            background: rgba(76, 201, 240, 0.15);
+            color: #4cc9f0;
+            border: 1px solid rgba(76, 201, 240, 0.4);
+            padding: 6px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 11px;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-wiki:hover {
+            background: #4cc9f0;
+            color: #0b1d0b;
+        }
 
         .table-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); backdrop-filter: blur(12px); overflow-x: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.37); }
         .table-header-box { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
@@ -484,13 +519,14 @@
         <div class="card" style="margin-bottom: 10px;">
             <div class="card-title" style="font-size: 14px;">📖 JURNAL & REKOMENDASI PARAMETER TANAMAN GREEN HOUSE</div>
             <p style="font-size: 13px; color: var(--text-sub); margin: 8px 0 0 0;">
-                Setiap jenis tanaman memiliki toleransi suhu dan kelembaban tanah yang berbeda. Pilih atau klik tombol <b>"Terapkan Parameter Ke Sistem"</b> untuk mengkonfigurasi setpoint otomatis secara cepat.
+                Setiap jenis tanaman memiliki toleransi suhu dan kelembaban tanah yang berbeda. Klik <b>"Terapkan Parameter Ke Sistem"</b> untuk mengubah setpoint, atau klik <b>"Baca Wikipedia"</b> untuk referensi ilmiah lengkap.
             </p>
         </div>
 
         <div class="grid-3-col">
             <!-- TANAMAN A: CABAI / PAPRIKA -->
             <div class="plant-card">
+                <img src="https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=500&q=80" alt="Cabai" class="plant-img">
                 <div class="plant-header">
                     <span class="plant-name">🌶️ Cabai / Paprika</span>
                     <span class="plant-tag">Hortikultura</span>
@@ -501,11 +537,15 @@
                     • <b>Kelembaban Udara:</b> 60% - 80%<br>
                     • <b>Sifat:</b> Sensitif air berlebih. Penyiraman rutin tapi tipis.
                 </div>
-                <button class="btn-apply-preset" onclick="applyPreset(30.0, 35, 'Cabai / Paprika')">⚡ Terapkan Parameter Ke Sistem</button>
+                <div class="plant-btn-group">
+                    <button class="btn-apply-preset" onclick="applyPreset(30.0, 35, 'Cabai / Paprika')">⚡ Terapkan Parameter Ke Sistem</button>
+                    <a href="https://id.wikipedia.org/wiki/Cabai" target="_blank" class="btn-wiki">🌐 Baca Wikipedia Cabai</a>
+                </div>
             </div>
 
-            <!-- TANAMAN B: SAWI / SELADA / VEGETABLE -->
+            <!-- TANAMAN B: SAWI / SELADA -->
             <div class="plant-card">
+                <img src="https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?auto=format&fit=crop&w=500&q=80" alt="Sawi Selada" class="plant-img">
                 <div class="plant-header">
                     <span class="plant-name">🥬 Sawi / Selada</span>
                     <span class="plant-tag">Sayuran Hijau</span>
@@ -514,13 +554,17 @@
                     • <b>Batas Kipas (Suhu):</b> ≥ 28.0 °C<br>
                     • <b>Batas Siram (Tanah):</b> < 45 %<br>
                     • <b>Kelembaban Udara:</b> 70% - 85%<br>
-                    • <b>Sifat:</b> Membutuhkan kelembaban tanah relatif tinggi agar daun segar.
+                    • <b>Sifat:</b> Membutuhkan kelembaban tanah tinggi agar daun segar.
                 </div>
-                <button class="btn-apply-preset" onclick="applyPreset(28.0, 45, 'Sawi / Selada')">⚡ Terapkan Parameter Ke Sistem</button>
+                <div class="plant-btn-group">
+                    <button class="btn-apply-preset" onclick="applyPreset(28.0, 45, 'Sawi / Selada')">⚡ Terapkan Parameter Ke Sistem</button>
+                    <a href="https://id.wikipedia.org/wiki/Sawi" target="_blank" class="btn-wiki">🌐 Baca Wikipedia Sawi</a>
+                </div>
             </div>
 
             <!-- TANAMAN C: TOMAT -->
             <div class="plant-card">
+                <img src="https://images.unsplash.com/photo-1592841200221-a6898f307baa?auto=format&fit=crop&w=500&q=80" alt="Tomat" class="plant-img">
                 <div class="plant-header">
                     <span class="plant-name">🍅 Tomat Green House</span>
                     <span class="plant-tag">Buah Sayur</span>
@@ -529,13 +573,17 @@
                     • <b>Batas Kipas (Suhu):</b> ≥ 29.5 °C<br>
                     • <b>Batas Siram (Tanah):</b> < 30 %<br>
                     • <b>Kelembaban Udara:</b> 60% - 75%<br>
-                    • <b>Sifat:</b> Rentang suhu ideal 21-29°C. Kipas aktif saat udara gerah.
+                    • <b>Sifat:</b> Rentang ideal 21-29°C. Kipas aktif saat udara gerah.
                 </div>
-                <button class="btn-apply-preset" onclick="applyPreset(29.5, 30, 'Tomat')">⚡ Terapkan Parameter Ke Sistem</button>
+                <div class="plant-btn-group">
+                    <button class="btn-apply-preset" onclick="applyPreset(29.5, 30, 'Tomat')">⚡ Terapkan Parameter Ke Sistem</button>
+                    <a href="https://id.wikipedia.org/wiki/Tomat" target="_blank" class="btn-wiki">🌐 Baca Wikipedia Tomat</a>
+                </div>
             </div>
 
-            <!-- TANAMAN D: MELON / SEMANGKA -->
+            <!-- TANAMAN D: MELON -->
             <div class="plant-card">
+                <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=500&q=80" alt="Melon" class="plant-img">
                 <div class="plant-header">
                     <span class="plant-name">🍈 Melon Hydro/Soil</span>
                     <span class="plant-tag">Buah Buahan</span>
@@ -546,11 +594,15 @@
                     • <b>Kelembaban Udara:</b> 55% - 70%<br>
                     • <b>Sifat:</b> Suka hangat dan cahaya matahari melimpah.
                 </div>
-                <button class="btn-apply-preset" onclick="applyPreset(32.0, 40, 'Melon')">⚡ Terapkan Parameter Ke Sistem</button>
+                <div class="plant-btn-group">
+                    <button class="btn-apply-preset" onclick="applyPreset(32.0, 40, 'Melon')">⚡ Terapkan Parameter Ke Sistem</button>
+                    <a href="https://id.wikipedia.org/wiki/Melon" target="_blank" class="btn-wiki">🌐 Baca Wikipedia Melon</a>
+                </div>
             </div>
 
-            <!-- TANAMAN E: ANGGREK / EXOTIC PLANT -->
+            <!-- TANAMAN E: ANGGREK -->
             <div class="plant-card">
+                <img src="https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?auto=format&fit=crop&w=500&q=80" alt="Anggrek" class="plant-img">
                 <div class="plant-header">
                     <span class="plant-name">🌸 Anggrek / Hias</span>
                     <span class="plant-tag">Bunga Hias</span>
@@ -561,14 +613,18 @@
                     • <b>Kelembaban Udara:</b> 70% - 90%<br>
                     • <b>Sifat:</b> Butuh lingkungan sejuk dan sirkulasi udara konstan.
                 </div>
-                <button class="btn-apply-preset" onclick="applyPreset(27.5, 25, 'Anggrek / Hias')">⚡ Terapkan Parameter Ke Sistem</button>
+                <div class="plant-btn-group">
+                    <button class="btn-apply-preset" onclick="applyPreset(27.5, 25, 'Anggrek / Hias')">⚡ Terapkan Parameter Ke Sistem</button>
+                    <a href="https://id.wikipedia.org/wiki/Suku_anggrek-anggrekan" target="_blank" class="btn-wiki">🌐 Baca Wikipedia Anggrek</a>
+                </div>
             </div>
 
             <!-- TANAMAN F: STRAWBERRY -->
             <div class="plant-card">
+                <img src="https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=500&q=80" alt="Stroberi" class="plant-img">
                 <div class="plant-header">
                     <span class="plant-name">🍓 Stroberi</span>
-                    <span class="plant-tag">Buah Tropis/Sub</span>
+                    <span class="plant-tag">Buah Subtropis</span>
                 </div>
                 <div class="plant-param">
                     • <b>Batas Kipas (Suhu):</b> ≥ 26.0 °C<br>
@@ -576,7 +632,10 @@
                     • <b>Kelembaban Udara:</b> 65% - 80%<br>
                     • <b>Sifat:</b> Tidak tahan panas ekstrem. Kipas bekerja intensif.
                 </div>
-                <button class="btn-apply-preset" onclick="applyPreset(26.0, 35, 'Stroberi')">⚡ Terapkan Parameter Ke Sistem</button>
+                <div class="plant-btn-group">
+                    <button class="btn-apply-preset" onclick="applyPreset(26.0, 35, 'Stroberi')">⚡ Terapkan Parameter Ke Sistem</button>
+                    <a href="https://id.wikipedia.org/wiki/Kandis" target="_blank" class="btn-wiki">🌐 Baca Wikipedia Stroberi</a>
+                </div>
             </div>
         </div>
     </div>
