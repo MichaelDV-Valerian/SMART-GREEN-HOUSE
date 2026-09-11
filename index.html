@@ -10,37 +10,55 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #132a13 0%, #1a4314 40%, #2d5a27 100%);
-            --header-bg: rgba(19, 42, 19, 0.75);
-            --card-bg: rgba(24, 51, 24, 0.85);
+            --header-bg: rgba(19, 42, 19, 0.85);
+            --card-bg: rgba(18, 38, 18, 0.85);
             --text-main: #ecf3ec;
             --text-title: #b7e4c7;
             --text-sub: #95d5b2;
-            --border-color: rgba(149, 213, 178, 0.2);
+            --border-color: rgba(149, 213, 178, 0.25);
             --chart-grid: rgba(149, 213, 178, 0.15);
         }
 
         .light-theme {
-            --bg-gradient: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
-            --header-bg: rgba(255, 255, 255, 0.85);
-            --card-bg: rgba(255, 255, 255, 0.9);
+            --header-bg: rgba(255, 255, 255, 0.9);
+            --card-bg: rgba(255, 255, 255, 0.92);
             --text-main: #1b4332;
             --text-title: #081c15;
             --text-sub: #2d6a4f;
-            --border-color: rgba(45, 106, 79, 0.2);
+            --border-color: rgba(45, 106, 79, 0.25);
             --chart-grid: rgba(45, 106, 79, 0.15);
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; transition: background 0.3s, color 0.3s; }
         
         body { 
-            background: var(--bg-gradient);
             min-height: 100vh;
             margin: 0; 
             padding: 20px 30px; 
             color: var(--text-main); 
+            position: relative;
+            background-color: #0b1d0b;
         }
-        
+
+        /* WALLPAPER BACKGROUND FULLSCREEN DENGAN EFEK BLUR */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Menggunakan salah satu gambar greenhouse sebagai wallpaper */
+            background-image: url('images/images/gh2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            /* Efek Blur & Digelapkan agar kartu dashboard tetap kontras */
+            filter: blur(8px) brightness(0.4);
+            transform: scale(1.05); /* Mencegah pinggiran putih akibat blur */
+            z-index: -1;
+        }
+
         .header { 
             display: flex; 
             align-items: center; 
@@ -50,15 +68,15 @@
             background: var(--header-bg);
             padding: 15px 25px;
             border-radius: 12px;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.37);
             flex-wrap: wrap;
             gap: 10px;
         }
         .header h1 { font-size: 22px; font-weight: 800; margin: 0; color: var(--text-title); letter-spacing: 0.5px; }
         .header-info { text-align: right; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .weather-box { font-size: 12px; font-weight: 700; color: var(--text-sub); background: rgba(0,0,0,0.1); padding: 5px 10px; border-radius: 8px; display: flex; align-items: center; gap: 6px; }
+        .weather-box { font-size: 12px; font-weight: 700; color: var(--text-sub); background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 8px; display: flex; align-items: center; gap: 6px; }
         .live-clock { font-size: 13px; font-weight: 700; color: var(--text-sub); }
         .status-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #2d5a27; color: #d8f3dc; border: 1px solid #52b788; }
         .online { background: #38b000; color: white; border-color: #70e000; box-shadow: 0 0 10px rgba(112, 224, 0, 0.5); }
@@ -86,8 +104,8 @@
             border-radius: 12px; 
             padding: 20px; 
             border: 1px solid var(--border-color); 
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15); 
-            backdrop-filter: blur(6px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.37); 
+            backdrop-filter: blur(12px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -118,7 +136,6 @@
 
         .mode-text { font-size: 13px; font-weight: 800; color: var(--text-title); }
 
-        /* SLIDER SETPOINT STYLING */
         .slider-box {
             margin-top: 10px;
             padding-top: 8px;
@@ -144,51 +161,7 @@
             cursor: pointer;
         }
 
-        /* GALERI REFERENSI GREEN HOUSE */
-        .gallery-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-            backdrop-filter: blur(6px);
-        }
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .gallery-item {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            aspect-ratio: 16 / 9;
-        }
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        .gallery-item:hover img {
-            transform: scale(1.05);
-        }
-        .gallery-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 8px 12px;
-            background: rgba(0, 0, 0, 0.65);
-            color: #ffffff;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .table-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); overflow-x: auto; }
+        .table-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); backdrop-filter: blur(12px); overflow-x: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.37); }
         .table-header-box { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         .btn-action { background: #38b000; color: #0b1d0b; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
         .btn-action:hover { background: #70e000; }
@@ -198,10 +171,10 @@
         .log-table td { padding: 8px; border: 1px solid var(--border-color); color: var(--text-main); }
 
         .footer-action { text-align: center; margin-top: 5px; }
-        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #38b000; color: #0b1d0b; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 800; }
+        .btn-gsheet { display: inline-flex; align-items: center; gap: 8px; background: #38b000; color: #0b1d0b; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 800; box-shadow: 0 4px 15px rgba(56, 176, 0, 0.4); }
 
         @media (max-width: 1024px) { 
-            .grid-3-col, .grid-2-col, .gallery-grid { grid-template-columns: 1fr; } 
+            .grid-3-col, .grid-2-col { grid-template-columns: 1fr; } 
         }
     </style>
 </head>
@@ -362,26 +335,7 @@
             </div>
         </div>
 
-        <!-- BARIS 4: GALERI REFERENSI GREEN HOUSE -->
-        <div class="gallery-card">
-            <div class="card-title">🌿 GALERI REFERENSI GREEN HOUSE</div>
-            <div class="gallery-grid">
-                <div class="gallery-item">
-                    <img src="images/images/gh1.jpg" alt="Greenhouse Tanaman Muda">
-                    <div class="gallery-caption">Greenhouse Tanaman Muda</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/images/gh2.jpg" alt="Vegetasi Tropis">
-                    <div class="gallery-caption">Vegetasi Tropis & Eksotis</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/images/gh3.jpeg" alt="Struktur Kaca">
-                    <div class="gallery-caption">Struktur Kaca & Pembibitan</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BARIS 5: TABEL REKAP LOG DATA -->
+        <!-- BARIS 4: TABEL REKAP LOG DATA -->
         <div class="table-card">
             <div class="table-header-box">
                 <div class="card-title" style="margin: 0;">📋 REKAP LOG DATA SENSOR (MAX 15 DATA)</div>
@@ -628,7 +582,6 @@
             if (tbody.children.length > 15) tbody.removeChild(tbody.children[0]);
         }
 
-        // FUNGSI EKSPOR CSV RAPI DENGAN PEMISAH TITIK KOMA (;) & UTF-8 BOM
         function exportTableToCSV(filename) {
             let csv = [];
             let rows = document.querySelectorAll("#table-log tr");
@@ -679,7 +632,6 @@
             client.send(msg);
         }
 
-        // FUNGSI MENGIRIM SETPOINT SLIDER KE MQTT
         function kirimSetpointSuhu(val) { publish("smartfarm/setpoint/suhu", String(val)); }
         function kirimSetpointTanah(val) { publish("smartfarm/setpoint/tanah", String(val)); }
 
